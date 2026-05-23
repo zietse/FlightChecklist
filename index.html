@@ -97,10 +97,12 @@
     .prog-pct.complete { color:var(--green); }
 
     /* Items */
-    .cl-item { display:flex; align-items:flex-start; gap:14px; padding:12px 16px; border:1px solid var(--border); border-radius:var(--r); margin-bottom:5px; background:var(--bg2); transition:all 0.15s; animation:fadeIn 0.2s ease; }
+    .cl-item { display:flex; align-items:flex-start; gap:10px; padding:10px 12px; border:1px solid var(--border); border-radius:var(--r); margin-bottom:5px; background:var(--bg2); transition:all 0.15s; animation:fadeIn 0.2s ease; }
     @keyframes fadeIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
     .cl-item:hover { border-color:rgba(255,255,255,0.12); }
     .cl-item.checked { opacity:0.4; border-color:transparent; }
+    .cl-item.important { border-color:var(--red) !important; border-left-width:3px; }
+    .cl-item.important.checked { border-color:var(--red) !important; opacity:0.4; }
     .cl-checkbox { width:22px; height:22px; border-radius:4px; border:1.5px solid var(--text-faint); background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; transition:all 0.15s; }
     .cl-item.checked .cl-checkbox { background:var(--green); border-color:var(--green); }
     .cl-checkbox .ti { color:white; font-size:13px; display:none; }
@@ -110,9 +112,19 @@
     .cl-item.checked .cl-item-text { text-decoration:line-through; color:var(--text-faint); }
     .cl-item-value { font-size:11px; color:var(--amber); font-family:var(--mono); margin-top:2px; }
     .cl-item.checked .cl-item-value { color:var(--text-faint); }
-    .cl-item-del { width:26px; height:26px; border:none; background:transparent; color:var(--text-faint); cursor:pointer; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:14px; opacity:0; transition:opacity 0.15s; flex-shrink:0; }
-    .cl-item:hover .cl-item-del { opacity:1; }
-    .cl-item-del:hover { color:var(--red); background:var(--red-dim); }
+    .cl-item-actions { display:flex; align-items:center; gap:2px; flex-shrink:0; opacity:0; transition:opacity 0.15s; }
+    .cl-item:hover .cl-item-actions { opacity:1; }
+    .ia-btn { width:26px; height:26px; border:none; background:transparent; color:var(--text-faint); cursor:pointer; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:14px; transition:all 0.15s; }
+    .ia-btn:hover { background:var(--bg4); color:var(--text); }
+    .ia-btn.important-btn.on { color:var(--red); }
+    .ia-btn.del-btn:hover { color:var(--red); background:var(--red-dim); }
+    .cl-item-edit { display:none; flex-direction:column; gap:6px; margin-top:6px; }
+    .cl-item-edit.open { display:flex; }
+    .cl-item-edit input { height:32px; background:var(--bg3); border:1px solid var(--amber-dim); border-radius:var(--r); color:var(--text); font-family:var(--mono); font-size:12px; padding:0 10px; outline:none; }
+    .cl-item-edit-row { display:flex; gap:6px; }
+    .cl-item-edit-row input { flex:1; }
+    .edit-save { height:28px; padding:0 12px; background:var(--amber); border:none; border-radius:var(--r); color:#111; font-family:var(--sans); font-weight:700; font-size:12px; cursor:pointer; }
+    .edit-cancel { height:28px; padding:0 10px; border:1px solid var(--border); background:transparent; color:var(--text-muted); border-radius:var(--r); font-family:var(--sans); font-size:12px; cursor:pointer; }
 
     /* Section header inside checklist */
     .cl-section { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--amber-dim); font-family:var(--mono); padding:14px 0 6px; border-bottom:1px solid var(--border); margin-bottom:8px; margin-top:4px; }
@@ -756,14 +768,28 @@ function renderMain() {
   if (!cl.items.length) {
     html += '<div class="empty-state" style="padding:2rem"><i class="ti ti-list-details"></i><h3>No items yet</h3><p>Add items below.</p></div>';
   } else {
-    cl.items.forEach(item => {
-      html += `<div class="cl-item ${item.done?'checked':''}" data-item="${item.id}">
+    cl.items.forEach((item, idx) => {
+      html += `<div class="cl-item ${item.done?'checked':''} ${item.important?'important':''}" data-item="${item.id}">
         <button class="cl-checkbox" data-check="${item.id}" aria-label="Toggle"><i class="ti ti-check"></i></button>
         <div class="cl-item-body">
           <div class="cl-item-text">${item.text}</div>
           ${item.value?`<div class="cl-item-value">→ ${item.value}</div>`:''}
+          <div class="cl-item-edit" id="edit-${item.id}">
+            <input class="edit-text-input" type="text" value="${item.text}" placeholder="Step text" />
+            <div class="cl-item-edit-row">
+              <input class="edit-value-input" type="text" value="${item.value||''}" placeholder="Expected value" />
+              <button class="edit-save" data-save="${item.id}">Save</button>
+              <button class="edit-cancel" data-cancel="${item.id}">Cancel</button>
+            </div>
+          </div>
         </div>
-        <button class="cl-item-del" data-del-item="${item.id}"><i class="ti ti-x"></i></button>
+        <div class="cl-item-actions">
+          <button class="ia-btn" data-move-up="${item.id}" title="Move up" ${idx===0?'style="opacity:0.2;pointer-events:none"':''}><i class="ti ti-chevron-up"></i></button>
+          <button class="ia-btn" data-move-down="${item.id}" title="Move down" ${idx===cl.items.length-1?'style="opacity:0.2;pointer-events:none"':''}><i class="ti ti-chevron-down"></i></button>
+          <button class="ia-btn important-btn ${item.important?'on':''}" data-important="${item.id}" title="Mark important"><i class="ti ti-alert-triangle"></i></button>
+          <button class="ia-btn" data-edit="${item.id}" title="Edit"><i class="ti ti-pencil"></i></button>
+          <button class="ia-btn del-btn" data-del-item="${item.id}" title="Delete"><i class="ti ti-x"></i></button>
+        </div>
       </div>`;
     });
   }
@@ -863,7 +889,64 @@ document.getElementById('content').addEventListener('click', e => {
   const cb = e.target.closest('[data-check]');
   if (cb) { toggleItem(cb.dataset.check); return; }
   const del = e.target.closest('[data-del-item]');
-  if (del) { deleteItem(del.dataset.delItem); }
+  if (del) { deleteItem(del.dataset.delItem); return; }
+
+  const imp = e.target.closest('[data-important]');
+  if (imp) {
+    const plane = getPlane(activePlaneId);
+    const cl = getCL(plane, activeChecklistId);
+    const item = cl?.items.find(i => i.id === +imp.dataset.important);
+    if (item) { item.important = !item.important; save(); renderMain(); }
+    return;
+  }
+
+  const editBtn = e.target.closest('[data-edit]');
+  if (editBtn) {
+    const id = editBtn.dataset.edit;
+    const editEl = document.getElementById('edit-' + id);
+    if (editEl) { editEl.classList.toggle('open'); editEl.querySelector('.edit-text-input')?.focus(); }
+    return;
+  }
+
+  const saveBtn = e.target.closest('[data-save]');
+  if (saveBtn) {
+    const id = +saveBtn.dataset.save;
+    const plane = getPlane(activePlaneId);
+    const cl = getCL(plane, activeChecklistId);
+    const item = cl?.items.find(i => i.id === id);
+    if (item) {
+      const editEl = document.getElementById('edit-' + id);
+      const newText = editEl.querySelector('.edit-text-input').value.trim();
+      const newVal = editEl.querySelector('.edit-value-input').value.trim();
+      if (newText) { item.text = newText; item.value = newVal; save(); renderMain(); }
+    }
+    return;
+  }
+
+  const cancelBtn = e.target.closest('[data-cancel]');
+  if (cancelBtn) {
+    const editEl = document.getElementById('edit-' + cancelBtn.dataset.cancel);
+    if (editEl) editEl.classList.remove('open');
+    return;
+  }
+
+  const up = e.target.closest('[data-move-up]');
+  if (up) {
+    const plane = getPlane(activePlaneId);
+    const cl = getCL(plane, activeChecklistId);
+    const idx = cl.items.findIndex(i => i.id === +up.dataset.moveUp);
+    if (idx > 0) { [cl.items[idx-1], cl.items[idx]] = [cl.items[idx], cl.items[idx-1]]; save(); renderMain(); }
+    return;
+  }
+
+  const down = e.target.closest('[data-move-down]');
+  if (down) {
+    const plane = getPlane(activePlaneId);
+    const cl = getCL(plane, activeChecklistId);
+    const idx = cl.items.findIndex(i => i.id === +down.dataset.moveDown);
+    if (idx < cl.items.length - 1) { [cl.items[idx], cl.items[idx+1]] = [cl.items[idx+1], cl.items[idx]]; save(); renderMain(); }
+    return;
+  }
 });
 document.getElementById('add-plane-btn').addEventListener('click', () => {
   const inp = document.getElementById('new-plane-input');
