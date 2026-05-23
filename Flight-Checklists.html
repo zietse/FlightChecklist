@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Flight Check" />
+  <meta name="theme-color" content="#111210" />
+  <title>Flight checklists</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#111210; --bg2:#1a1c18; --bg3:#222420; --bg4:#2a2d28;
+      --amber:#e8a020; --amber-dim:#7a5210; --amber-glow:#e8a02022;
+      --green:#4caf7d; --green-dim:#1a3d2a;
+      --red:#d9534f; --red-dim:#3d1a1a;
+      --text:#e8e6df; --text-muted:#888880; --text-faint:#444440;
+      --border:rgba(255,255,255,0.07); --border-amb:rgba(232,160,32,0.3);
+      --mono:'Share Tech Mono',monospace; --sans:'Barlow',sans-serif;
+      --r:6px;
+    }
+    html,body { height:100%; background:var(--bg); color:var(--text); font-family:var(--sans); -webkit-tap-highlight-color:transparent; overscroll-behavior:none; }
+    .layout { display:flex; height:100vh; height:100dvh; overflow:hidden; }
+
+    /* Sidebar */
+    .sidebar { width:270px; min-width:270px; background:var(--bg2); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
+    .sidebar-header { padding:20px 18px 16px; border-bottom:1px solid var(--border); }
+    .app-title { font-family:var(--mono); font-size:17px; color:var(--amber); letter-spacing:2px; text-transform:uppercase; display:flex; align-items:center; gap:8px; }
+    .app-title .ti { font-size:20px; }
+    .app-sub { font-size:10px; color:var(--text-faint); letter-spacing:1px; text-transform:uppercase; margin-top:4px; font-family:var(--mono); }
+    .sec-label { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-faint); font-family:var(--mono); padding:14px 18px 6px; }
+    .sb-scroll { flex:1; overflow-y:auto; padding-bottom:12px; }
+    .sb-scroll::-webkit-scrollbar { width:3px; }
+    .sb-scroll::-webkit-scrollbar-thumb { background:var(--bg4); border-radius:2px; }
+    .plane-row { display:flex; align-items:center; padding:10px 18px; cursor:pointer; gap:10px; border-left:2px solid transparent; transition:all 0.15s; }
+    .plane-row:hover { background:var(--bg3); }
+    .plane-row.active { border-left-color:var(--amber); background:var(--amber-glow); }
+    .plane-icon { width:30px; height:30px; border-radius:4px; background:var(--bg4); display:flex; align-items:center; justify-content:center; font-size:16px; color:var(--text-muted); flex-shrink:0; }
+    .plane-row.active .plane-icon { background:var(--amber-dim); color:var(--amber); }
+    .plane-info { flex:1; min-width:0; }
+    .plane-name { font-size:14px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .plane-row.active .plane-name { color:var(--amber); }
+    .plane-meta { font-size:11px; color:var(--text-faint); font-family:var(--mono); margin-top:1px; }
+    .plane-del { width:24px; height:24px; border:none; background:transparent; color:var(--text-faint); cursor:pointer; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:14px; opacity:0; transition:opacity 0.15s; flex-shrink:0; }
+    .plane-row:hover .plane-del { opacity:1; }
+    .plane-del:hover { color:var(--red); background:var(--red-dim); }
+    .add-row { display:flex; align-items:center; gap:8px; padding:8px 18px; }
+    .add-row input { flex:1; height:34px; background:var(--bg3); border:1px solid var(--border); border-radius:var(--r); color:var(--text); font-family:var(--sans); font-size:13px; padding:0 10px; outline:none; }
+    .add-row input::placeholder { color:var(--text-faint); }
+    .add-row input:focus { border-color:var(--amber-dim); }
+    .icon-btn { width:34px; height:34px; border:1px solid var(--border); background:var(--bg3); border-radius:var(--r); color:var(--text-muted); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; transition:all 0.15s; }
+    .icon-btn:hover { border-color:var(--amber-dim); color:var(--amber); background:var(--amber-glow); }
+    .icon-btn:active { transform:scale(0.95); }
+
+    /* Main */
+    .main { flex:1; display:flex; flex-direction:column; overflow:hidden; background:var(--bg); }
+    .top-bar { padding:16px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:16px; background:var(--bg2); flex-shrink:0; }
+    .top-bar-left h2 { font-size:20px; font-weight:700; color:var(--text); letter-spacing:-0.3px; }
+    .top-bar-left p { font-size:12px; color:var(--text-faint); font-family:var(--mono); margin-top:2px; letter-spacing:0.5px; }
+    .top-actions { display:flex; gap:8px; align-items:center; flex-shrink:0; }
+    .pill-btn { height:34px; padding:0 14px; border-radius:99px; border:1px solid var(--border); background:transparent; color:var(--text-muted); font-family:var(--sans); font-size:13px; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.15s; white-space:nowrap; }
+    .pill-btn:hover { border-color:var(--amber-dim); color:var(--amber); }
+    .pill-btn.danger:hover { border-color:var(--red); color:var(--red); background:var(--red-dim); }
+
+    /* Tabs */
+    .cl-tabs { display:flex; padding:0 24px; border-bottom:1px solid var(--border); background:var(--bg2); overflow-x:auto; flex-shrink:0; }
+    .cl-tabs::-webkit-scrollbar { height:0; }
+    .cl-tab { padding:11px 16px; font-size:13px; font-weight:500; color:var(--text-muted); cursor:pointer; border:none; background:transparent; border-bottom:2px solid transparent; white-space:nowrap; font-family:var(--sans); display:flex; align-items:center; gap:6px; transition:all 0.15s; margin-bottom:-1px; }
+    .cl-tab:hover { color:var(--text); }
+    .cl-tab.active { color:var(--amber); border-bottom-color:var(--amber); }
+    .cl-tab .badge { font-size:10px; font-family:var(--mono); background:var(--bg4); padding:1px 6px; border-radius:99px; color:var(--text-faint); }
+    .cl-tab.active .badge { background:var(--amber-dim); color:var(--amber); }
+    .cl-tab-add { padding:11px 14px; color:var(--text-faint); cursor:pointer; font-size:18px; background:none; border:none; margin-bottom:-1px; }
+    .cl-tab-add:hover { color:var(--amber); }
+
+    /* Content */
+    .content { flex:1; overflow-y:auto; padding:24px; }
+    .content::-webkit-scrollbar { width:4px; }
+    .content::-webkit-scrollbar-thumb { background:var(--bg4); border-radius:2px; }
+
+    /* Progress */
+    .prog-strip { display:flex; align-items:center; gap:14px; margin-bottom:20px; padding:14px 18px; background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); }
+    .prog-label { font-family:var(--mono); font-size:12px; color:var(--text-muted); white-space:nowrap; }
+    .prog-bar { flex:1; height:4px; background:var(--bg4); border-radius:99px; overflow:hidden; }
+    .prog-fill { height:100%; background:var(--amber); border-radius:99px; transition:width 0.4s cubic-bezier(0.4,0,0.2,1); }
+    .prog-fill.complete { background:var(--green); }
+    .prog-pct { font-family:var(--mono); font-size:13px; font-weight:700; color:var(--amber); min-width:36px; text-align:right; }
+    .prog-pct.complete { color:var(--green); }
+
+    /* Items */
+    .cl-item { display:flex; align-items:flex-start; gap:14px; padding:12px 16px; border:1px solid var(--border); border-radius:var(--r); margin-bottom:5px; background:var(--bg2); transition:all 0.15s; animation:fadeIn 0.2s ease; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
+    .cl-item:hover { border-color:rgba(255,255,255,0.12); }
+    .cl-item.checked { opacity:0.4; border-color:transparent; }
+    .cl-checkbox { width:22px; height:22px; border-radius:4px; border:1.5px solid var(--text-faint); background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; transition:all 0.15s; }
+    .cl-item.checked .cl-checkbox { background:var(--green); border-color:var(--green); }
+    .cl-checkbox .ti { color:white; font-size:13px; display:none; }
+    .cl-item.checked .cl-checkbox .ti { display:block; }
+    .cl-item-body { flex:1; min-width:0; }
+    .cl-item-text { font-family:var(--mono); font-size:13px; color:var(--text); line-height:1.5; }
+    .cl-item.checked .cl-item-text { text-decoration:line-through; color:var(--text-faint); }
+    .cl-item-value { font-size:11px; color:var(--amber); font-family:var(--mono); margin-top:2px; }
+    .cl-item.checked .cl-item-value { color:var(--text-faint); }
+    .cl-item-del { width:26px; height:26px; border:none; background:transparent; color:var(--text-faint); cursor:pointer; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:14px; opacity:0; transition:opacity 0.15s; flex-shrink:0; }
+    .cl-item:hover .cl-item-del { opacity:1; }
+    .cl-item-del:hover { color:var(--red); background:var(--red-dim); }
+
+    /* Section header inside checklist */
+    .cl-section { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--amber-dim); font-family:var(--mono); padding:14px 0 6px; border-bottom:1px solid var(--border); margin-bottom:8px; margin-top:4px; }
+    .cl-section:first-child { padding-top:0; }
+
+    /* Add item */
+    .add-item-row { display:flex; gap:8px; margin-top:14px; }
+    .add-item-row input { flex:1; height:42px; background:var(--bg2); border:1px dashed var(--border); border-radius:var(--r); color:var(--text); font-family:var(--mono); font-size:13px; padding:0 14px; outline:none; transition:border-color 0.15s; }
+    .add-item-row input:focus { border-color:var(--amber-dim); border-style:solid; }
+    .add-item-row input::placeholder { color:var(--text-faint); }
+    .add-item-row .val-in { width:130px; flex:none; }
+    .add-item-btn { height:42px; padding:0 16px; background:var(--amber); border:none; border-radius:var(--r); color:#111; font-family:var(--sans); font-weight:700; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:5px; white-space:nowrap; }
+    .add-item-btn:hover { opacity:0.88; }
+    .add-item-btn:active { transform:scale(0.97); }
+
+    /* Empty */
+    .empty-state { text-align:center; padding:4rem 2rem; color:var(--text-faint); }
+    .empty-state .ti { font-size:48px; display:block; margin-bottom:16px; color:var(--bg4); }
+    .empty-state h3 { font-size:16px; font-weight:600; color:var(--text-muted); margin-bottom:8px; }
+    .empty-state p { font-size:13px; line-height:1.6; max-width:280px; margin:0 auto; }
+
+    /* Complete banner */
+    .complete-banner { display:flex; align-items:center; gap:14px; padding:14px 18px; background:var(--green-dim); border:1px solid var(--green); border-radius:var(--r); margin-bottom:18px; }
+    .complete-banner .ti { font-size:22px; color:var(--green); }
+    .complete-banner h4 { font-size:13px; font-weight:700; color:var(--green); font-family:var(--mono); letter-spacing:1px; text-transform:uppercase; }
+    .complete-banner p { font-size:12px; color:var(--text-muted); margin-top:2px; }
+
+    /* Modal */
+    .modal-bg { position:fixed; inset:0; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:100; padding:24px; }
+    .modal { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:24px; width:100%; max-width:400px; }
+    .modal h3 { font-size:16px; font-weight:700; margin-bottom:16px; color:var(--text); }
+    .modal input { width:100%; height:42px; background:var(--bg3); border:1px solid var(--border); border-radius:var(--r); color:var(--text); font-family:var(--sans); font-size:14px; padding:0 14px; outline:none; margin-bottom:10px; }
+    .modal input:focus { border-color:var(--amber-dim); }
+    .modal-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:16px; }
+    .btn-cancel { height:38px; padding:0 16px; border:1px solid var(--border); background:transparent; color:var(--text-muted); border-radius:var(--r); font-family:var(--sans); font-size:14px; cursor:pointer; }
+    .btn-confirm { height:38px; padding:0 18px; border:none; background:var(--amber); color:#111; border-radius:var(--r); font-family:var(--sans); font-size:14px; font-weight:700; cursor:pointer; }
+
+    @media (max-width:700px) { .sidebar{width:220px;min-width:220px;} .content{padding:16px;} .top-bar{padding:12px 16px;} .cl-tabs{padding:0 16px;} }
+    @media (max-width:520px) { .layout{flex-direction:column;} .sidebar{width:100%;min-width:0;height:auto;max-height:42vh;border-right:none;border-bottom:1px solid var(--border);} .main{flex:1;} }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="app-title"><i class="ti ti-plane"></i> Flight Check</div>
+      <div class="app-sub">Pre-flight Checklists</div>
+    </div>
+    <div class="sec-label">Aircraft</div>
+    <div class="sb-scroll" id="plane-list"></div>
+    <div class="add-row">
+      <input type="text" id="new-plane-input" placeholder="New aircraft…" maxlength="30" />
+      <button class="icon-btn" id="add-plane-btn" title="Add aircraft"><i class="ti ti-plus"></i></button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <h2 id="main-title">Select an aircraft</h2>
+        <p id="main-sub">← Choose an aircraft to get started</p>
+      </div>
+      <div class="top-actions" id="top-actions"></div>
+    </div>
+    <div class="cl-tabs" id="cl-tabs"></div>
+    <div class="content" id="content">
+      <div class="empty-state"><i class="ti ti-plane-tilt"></i><h3>No aircraft selected</h3><p>Select an aircraft from the sidebar.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal" style="display:none">
+  <div class="modal">
+    <h3 id="modal-title">New checklist</h3>
+    <input type="text" id="modal-input" maxlength="40" />
+    <div class="modal-actions">
+      <button class="btn-cancel" id="modal-cancel">Cancel</button>
+      <button class="btn-confirm" id="modal-confirm">Create</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Seed data ──────────────────────────────────────────────────────────────
+const SEED = {
+  nextId: 1000,
+  planes: [
+  ]
+};
+
+// ── State ──────────────────────────────────────────────
+let db = JSON.parse(localStorage.getItem('flightcheck-db') || 'null') || JSON.parse(JSON.stringify(SEED));
+let activePlaneId = db.planes[0]?.id || null;
+let activeChecklistId = db.planes[0]?.checklists[0]?.id || null;
+
+function save() { localStorage.setItem('flightcheck-db', JSON.stringify(db)); }
+function uid() { return db.nextId++; }
+function getPlane(id) { return db.planes.find(p => p.id === id); }
+function getCL(plane, id) { return plane?.checklists.find(c => c.id === id); }
+
+// ── Render sidebar ─────────────────────────────────────
+function renderSidebar() {
+  const el = document.getElementById('plane-list');
+  el.innerHTML = '';
+  if (!db.planes.length) {
+    el.innerHTML = '<div style="padding:12px 18px;font-size:12px;color:var(--text-faint);font-family:var(--mono);">No aircraft yet</div>';
+    return;
+  }
+  db.planes.forEach(plane => {
+    const done = plane.checklists.reduce((n,cl) => n + cl.items.filter(i=>i.done).length, 0);
+    const total = plane.checklists.reduce((n,cl) => n + cl.items.length, 0);
+    const div = document.createElement('div');
+    div.innerHTML = `
+      <div class="plane-row ${plane.id===activePlaneId?'active':''}" data-id="${plane.id}">
+        <div class="plane-icon"><i class="ti ti-plane"></i></div>
+        <div class="plane-info">
+          <div class="plane-name">${plane.name}</div>
+          <div class="plane-meta">${plane.checklists.length} lists · ${done}/${total}</div>
+        </div>
+        <button class="plane-del" data-del="${plane.id}"><i class="ti ti-trash"></i></button>
+      </div>`;
+    el.appendChild(div);
+  });
+}
+
+// ── Render main ────────────────────────────────────────
+function renderMain() {
+  const plane = getPlane(activePlaneId);
+  const titleEl = document.getElementById('main-title');
+  const subEl = document.getElementById('main-sub');
+  const tabsEl = document.getElementById('cl-tabs');
+  const contentEl = document.getElementById('content');
+  const actionsEl = document.getElementById('top-actions');
+
+  if (!plane) {
+    titleEl.textContent = 'Select an aircraft';
+    subEl.textContent = '← Choose or add an aircraft';
+    tabsEl.innerHTML = ''; actionsEl.innerHTML = '';
+    contentEl.innerHTML = '<div class="empty-state"><i class="ti ti-plane-tilt"></i><h3>No aircraft selected</h3><p>Select an aircraft from the sidebar.</p></div>';
+    return;
+  }
+
+  titleEl.textContent = plane.name;
+  subEl.textContent = `${plane.checklists.length} checklists · Always refer to POH`;
+
+  actionsEl.innerHTML = `<button class="pill-btn danger" id="reset-btn"><i class="ti ti-refresh"></i> Reset all</button>`;
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    if (confirm('Reset all checklists for this aircraft?')) {
+      plane.checklists.forEach(cl => cl.items.forEach(i => i.done = false));
+      save(); renderSidebar(); renderMain();
+    }
+  });
+
+  // Tabs
+  tabsEl.innerHTML = '';
+  plane.checklists.forEach(cl => {
+    const done = cl.items.filter(i=>i.done).length;
+    const btn = document.createElement('button');
+    btn.className = 'cl-tab' + (cl.id===activeChecklistId?' active':'');
+    btn.dataset.id = cl.id;
+    btn.innerHTML = `${cl.name} <span class="badge">${done}/${cl.items.length}</span>`;
+    tabsEl.appendChild(btn);
+  });
+  const addTab = document.createElement('button');
+  addTab.className = 'cl-tab-add'; addTab.title = 'New checklist';
+  addTab.innerHTML = '<i class="ti ti-plus"></i>';
+  addTab.addEventListener('click', openModal);
+  tabsEl.appendChild(addTab);
+
+  // Content
+  if (!activeChecklistId && plane.checklists.length) activeChecklistId = plane.checklists[0].id;
+  const cl = getCL(plane, activeChecklistId);
+
+  if (!cl) {
+    contentEl.innerHTML = '<div class="empty-state"><i class="ti ti-list-check"></i><h3>No checklists</h3><p>Tap + to add a checklist.</p></div>';
+    return;
+  }
+
+  const done = cl.items.filter(i=>i.done).length;
+  const total = cl.items.length;
+  const pct = total ? Math.round((done/total)*100) : 0;
+  const complete = done===total && total>0;
+
+  let html = `<div class="prog-strip">
+    <span class="prog-label">${cl.name.toUpperCase()}</span>
+    <div class="prog-bar"><div class="prog-fill ${complete?'complete':''}" style="width:${pct}%"></div></div>
+    <span class="prog-pct ${complete?'complete':''}">${pct}%</span>
+  </div>`;
+
+  if (complete) html += `<div class="complete-banner"><i class="ti ti-circle-check"></i><div><h4>Checklist complete</h4><p>All items verified. Safe flying!</p></div></div>`;
+
+  if (!cl.items.length) {
+    html += '<div class="empty-state" style="padding:2rem"><i class="ti ti-list-details"></i><h3>No items yet</h3><p>Add items below.</p></div>';
+  } else {
+    cl.items.forEach(item => {
+      html += `<div class="cl-item ${item.done?'checked':''}" data-item="${item.id}">
+        <button class="cl-checkbox" data-check="${item.id}" aria-label="Toggle"><i class="ti ti-check"></i></button>
+        <div class="cl-item-body">
+          <div class="cl-item-text">${item.text}</div>
+          ${item.value?`<div class="cl-item-value">→ ${item.value}</div>`:''}
+        </div>
+        <button class="cl-item-del" data-del-item="${item.id}"><i class="ti ti-x"></i></button>
+      </div>`;
+    });
+  }
+
+  html += `<div class="add-item-row">
+    <input type="text" id="new-item-text" placeholder="New item…" />
+    <input type="text" id="new-item-value" class="val-in" placeholder="Expected value" />
+    <button class="add-item-btn" id="add-item-btn"><i class="ti ti-plus"></i> Add</button>
+  </div>`;
+
+  contentEl.innerHTML = html;
+  document.getElementById('add-item-btn').addEventListener('click', addItem);
+  document.getElementById('new-item-text').addEventListener('keydown', e => { if(e.key==='Enter') addItem(); });
+}
+
+// ── Actions ────────────────────────────────────────────
+function addPlane(name) {
+  if (!name.trim()) return;
+  const plane = { id: uid(), name: name.trim(), checklists: [] };
+  db.planes.push(plane);
+  activePlaneId = plane.id; activeChecklistId = null;
+  save(); renderSidebar(); renderMain();
+}
+
+function deletePlane(id) {
+  if (!confirm('Delete this aircraft and all its checklists?')) return;
+  db.planes = db.planes.filter(p => p.id !== id);
+  if (activePlaneId === id) { activePlaneId = db.planes[0]?.id || null; activeChecklistId = null; }
+  save(); renderSidebar(); renderMain();
+}
+
+function addCL(name) {
+  const plane = getPlane(activePlaneId);
+  if (!plane || !name.trim()) return;
+  const cl = { id: uid(), name: name.trim(), items: [] };
+  plane.checklists.push(cl);
+  activeChecklistId = cl.id;
+  save(); renderSidebar(); renderMain();
+}
+
+function addItem() {
+  const plane = getPlane(activePlaneId);
+  const cl = getCL(plane, activeChecklistId);
+  if (!cl) return;
+  const text = document.getElementById('new-item-text')?.value.trim();
+  if (!text) return;
+  const value = document.getElementById('new-item-value')?.value.trim();
+  cl.items.push({ id: uid(), text, value, done: false });
+  save(); renderSidebar(); renderMain();
+  setTimeout(() => document.getElementById('new-item-text')?.focus(), 50);
+}
+
+function toggleItem(itemId) {
+  const plane = getPlane(activePlaneId);
+  const cl = getCL(plane, activeChecklistId);
+  const item = cl?.items.find(i => i.id === +itemId);
+  if (item) { item.done = !item.done; save(); renderSidebar(); renderMain(); }
+}
+
+function deleteItem(itemId) {
+  const plane = getPlane(activePlaneId);
+  const cl = getCL(plane, activeChecklistId);
+  if (!cl) return;
+  cl.items = cl.items.filter(i => i.id !== +itemId);
+  save(); renderSidebar(); renderMain();
+}
+
+// ── Modal ──────────────────────────────────────────────
+function openModal() {
+  document.getElementById('modal-title').textContent = 'New checklist';
+  document.getElementById('modal-input').value = '';
+  document.getElementById('modal').style.display = 'flex';
+  setTimeout(() => document.getElementById('modal-input').focus(), 50);
+}
+function closeModal() { document.getElementById('modal').style.display = 'none'; }
+document.getElementById('modal-confirm').addEventListener('click', () => { addCL(document.getElementById('modal-input').value); closeModal(); });
+document.getElementById('modal-cancel').addEventListener('click', closeModal);
+document.getElementById('modal').addEventListener('click', e => { if(e.target===document.getElementById('modal')) closeModal(); });
+document.getElementById('modal-input').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('modal-confirm').click(); });
+
+// ── Event delegation ───────────────────────────────────
+document.getElementById('plane-list').addEventListener('click', e => {
+  const del = e.target.closest('[data-del]');
+  if (del) { e.stopPropagation(); deletePlane(+del.dataset.del); return; }
+  const row = e.target.closest('.plane-row[data-id]');
+  if (row) {
+    activePlaneId = +row.dataset.id;
+    activeChecklistId = getPlane(activePlaneId)?.checklists[0]?.id || null;
+    renderSidebar(); renderMain();
+  }
+});
+document.getElementById('cl-tabs').addEventListener('click', e => {
+  const tab = e.target.closest('.cl-tab[data-id]');
+  if (tab) { activeChecklistId = +tab.dataset.id; renderMain(); }
+});
+document.getElementById('content').addEventListener('click', e => {
+  const cb = e.target.closest('[data-check]');
+  if (cb) { toggleItem(cb.dataset.check); return; }
+  const del = e.target.closest('[data-del-item]');
+  if (del) { deleteItem(del.dataset.delItem); }
+});
+document.getElementById('add-plane-btn').addEventListener('click', () => {
+  const inp = document.getElementById('new-plane-input');
+  addPlane(inp.value); inp.value = '';
+});
+document.getElementById('new-plane-input').addEventListener('keydown', e => {
+  if (e.key==='Enter') document.getElementById('add-plane-btn').click();
+});
+
+// ── Init ───────────────────────────────────────────────
+renderSidebar();
+renderMain();
+</script>
+</body>
+</html>
