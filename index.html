@@ -925,17 +925,126 @@ document.getElementById('notes-tab').addEventListener('click', () => {
   document.getElementById('notes-tab').classList.add('active');
   activePlaneId = null;
   document.getElementById('main-title').textContent = 'Notes';
-  document.getElementById('main-sub').textContent = 'Scratch pad — not saved';
-  document.getElementById('top-actions').innerHTML = '';
-  document.getElementById('cl-tabs').innerHTML = '';
-  document.getElementById('content').innerHTML = `
-    <textarea id="notes-area" placeholder="Write anything here…" style="
-      width:100%; height:100%; min-height:500px;
-      background:transparent; border:none; outline:none; resize:none;
-      color:var(--text); font-family:var(--mono); font-size:14px;
-      line-height:1.8; padding:0;
-    "></textarea>`;
-  document.getElementById('notes-area').focus();
+  document.getElementById('main-sub').textContent = 'Draw with finger or Apple Pencil';
+  document.getElementById('top-actions').innerHTML = `
+    <button class="pill-btn" id="undo-btn"><i class="ti ti-arrow-back-up"></i> Undo</button>
+    <button class="pill-btn danger" id="clear-canvas-btn"><i class="ti ti-trash"></i> Clear</button>`;
+  document.getElementById('cl-tabs').innerHTML = `
+    <div style="display:flex;align-items:center;gap:6px;padding:8px 24px;overflow-x:auto;">
+      <span style="font-size:11px;color:var(--text-faint);font-family:var(--mono);margin-right:4px;">COLOR</span>
+      ${['#e8e6df','#e8a020','#4caf7d','#d9534f','#5b9bd5'].map(c=>`
+        <button class="color-btn" data-color="${c}" style="width:22px;height:22px;border-radius:50%;background:${c};border:2px solid transparent;cursor:pointer;flex-shrink:0;"></button>
+      `).join('')}
+      <span style="font-size:11px;color:var(--text-faint);font-family:var(--mono);margin-left:10px;margin-right:4px;">SIZE</span>
+      ${[2,4,8,14].map(s=>`
+        <button class="size-btn" data-size="${s}" style="width:${s+14}px;height:${s+14}px;border-radius:50%;background:var(--text-muted);border:2px solid transparent;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;"></button>
+      `).join('')}
+      <span style="font-size:11px;color:var(--text-faint);font-family:var(--mono);margin-left:10px;margin-right:4px;">TOOL</span>
+      <button class="tool-btn active-tool" data-tool="pen" style="height:28px;padding:0 10px;border-radius:4px;border:1px solid var(--amber);background:var(--amber-glow);color:var(--amber);font-family:var(--mono);font-size:11px;cursor:pointer;">PEN</button>
+      <button class="tool-btn" data-tool="eraser" style="height:28px;padding:0 10px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:var(--mono);font-size:11px;cursor:pointer;">ERASER</button>
+    </div>`;
+  document.getElementById('content').innerHTML = `<canvas id="draw-canvas" style="display:block;width:100%;touch-action:none;cursor:crosshair;border-radius:var(--r);"></canvas>`;
+
+  const canvas = document.getElementById('draw-canvas');
+  const content = document.getElementById('content');
+  canvas.width = content.clientWidth;
+  canvas.height = Math.max(content.clientHeight, 600);
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#1a1c18';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  let drawing = false;
+  let color = '#e8e6df';
+  let size = 4;
+  let tool = 'pen';
+  let history = [];
+
+  function saveState() {
+    history.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+    if (history.length > 40) history.shift();
+  }
+
+  function getPos(e) {
+    const r = canvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return { x: (src.clientX - r.left) * (canvas.width / r.width), y: (src.clientY - r.top) * (canvas.height / r.height) };
+  }
+
+  function startDraw(e) {
+    e.preventDefault();
+    saveState();
+    drawing = true;
+    const p = getPos(e);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+  }
+
+  function draw(e) {
+    e.preventDefault();
+    if (!drawing) return;
+    const p = getPos(e);
+    ctx.lineTo(p.x, p.y);
+    ctx.strokeStyle = tool === 'eraser' ? '#1a1c18' : color;
+    ctx.lineWidth = tool === 'eraser' ? size * 5 : size;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+  }
+
+  function endDraw(e) { e.preventDefault(); drawing = false; ctx.beginPath(); }
+
+  canvas.addEventListener('mousedown', startDraw);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', endDraw);
+  canvas.addEventListener('touchstart', startDraw, { passive: false });
+  canvas.addEventListener('touchmove', draw, { passive: false });
+  canvas.addEventListener('touchend', endDraw, { passive: false });
+
+  document.getElementById('clear-canvas-btn').addEventListener('click', () => {
+    saveState();
+    ctx.fillStyle = '#1a1c18';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  });
+
+  document.getElementById('undo-btn').addEventListener('click', () => {
+    if (history.length) ctx.putImageData(history.pop(), 0, 0);
+  });
+
+  document.querySelectorAll('.color-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      color = btn.dataset.color;
+      tool = 'pen';
+      document.querySelectorAll('.color-btn').forEach(b => b.style.borderColor = 'transparent');
+      btn.style.borderColor = '#e8a020';
+      document.querySelectorAll('.tool-btn').forEach(b => {
+        b.style.borderColor = 'var(--border)'; b.style.background = 'transparent'; b.style.color = 'var(--text-muted)';
+      });
+      const penBtn = document.querySelector('.tool-btn[data-tool="pen"]');
+      penBtn.style.borderColor = 'var(--amber)'; penBtn.style.background = 'var(--amber-glow)'; penBtn.style.color = 'var(--amber)';
+    });
+  });
+
+  document.querySelectorAll('.size-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      size = +btn.dataset.size;
+      document.querySelectorAll('.size-btn').forEach(b => b.style.borderColor = 'transparent');
+      btn.style.borderColor = '#e8a020';
+    });
+  });
+
+  document.querySelectorAll('.tool-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      tool = btn.dataset.tool;
+      document.querySelectorAll('.tool-btn').forEach(b => {
+        b.style.borderColor = 'var(--border)'; b.style.background = 'transparent'; b.style.color = 'var(--text-muted)';
+      });
+      btn.style.borderColor = 'var(--amber)'; btn.style.background = 'var(--amber-glow)'; btn.style.color = 'var(--amber)';
+    });
+  });
+
+  // Set default active indicators
+  document.querySelector('.color-btn[data-color="#e8e6df"]').style.borderColor = '#e8a020';
+  document.querySelectorAll('.size-btn')[1].style.borderColor = '#e8a020';
 });
 
 // ── Init ───────────────────────────────────────────────
