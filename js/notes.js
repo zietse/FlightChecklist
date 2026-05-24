@@ -73,7 +73,7 @@ function renderNotes() {
       <span style="font-size:11px;color:var(--text-faint);font-family:var(--mono);margin-right:2px;">COLOR</span>
       ${['#e8e6df','#e8a020','#4caf7d','#d9534f','#5b9bd5'].map(c => `<button class="color-btn" data-color="${c}" style="width:22px;height:22px;border-radius:50%;background:${c};border:2px solid ${c === '#e8e6df' ? '#e8a020' : 'transparent'};cursor:pointer;flex-shrink:0;"></button>`).join('')}
       <span style="font-size:11px;color:var(--text-faint);font-family:var(--mono);margin-left:8px;margin-right:2px;">SIZE</span>
-      ${[2,4,8,14].map((s,i) => `<button class="size-btn" data-size="${s}" style="width:${s+14}px;height:${s+14}px;border-radius:50%;background:var(--text-muted);border:2px solid ${i === 1 ? '#e8a020' : 'transparent'};cursor:pointer;flex-shrink:0;"></button>`).join('')}
+      ${[1,2,4,8,14].map(s => `<button class="size-btn" data-size="${s}" style="width:${s+14}px;height:${s+14}px;border-radius:50%;background:var(--text-muted);border:2px solid ${s === drawSize ? '#e8a020' : 'transparent'};cursor:pointer;flex-shrink:0;"></button>`).join('')}
       <span style="font-size:11px;color:var(--text-faint);font-family:var(--mono);margin-left:8px;margin-right:2px;">TOOL</span>
       <button class="tool-btn" data-tool="pen" style="height:28px;padding:0 10px;border-radius:4px;border:1px solid var(--amber);background:var(--amber-glow);color:var(--amber);font-family:var(--mono);font-size:11px;cursor:pointer;">PEN</button>
       <button class="tool-btn" data-tool="eraser" style="height:28px;padding:0 10px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:var(--mono);font-size:11px;cursor:pointer;">ERASER</button>
@@ -88,9 +88,14 @@ function renderNotes() {
     </div>`;
 
   const canvas = document.getElementById('draw-canvas');
-  canvas.width = contentEl.clientWidth;
-  canvas.height = Math.max(contentEl.clientHeight - 60, 500);
-  document.getElementById('canvas-wrap').style.height = canvas.height + 'px';
+  const dpr = window.devicePixelRatio || 1;
+  const cssW = contentEl.clientWidth;
+  const cssH = Math.max(contentEl.clientHeight - 60, 500);
+  canvas.width = cssW * dpr;
+  canvas.height = cssH * dpr;
+  canvas.style.width = cssW + 'px';
+  canvas.style.height = cssH + 'px';
+  document.getElementById('canvas-wrap').style.height = cssH + 'px';
 
   const ctx = canvas.getContext('2d');
   const saved = getNoteCanvas(noteId);
@@ -116,7 +121,7 @@ function renderNotes() {
   function getPos(e) {
     const r = canvas.getBoundingClientRect();
     const src = e.touches ? e.touches[0] : e;
-    return { x: (src.clientX - r.left) * (canvas.width / r.width), y: (src.clientY - r.top) * (canvas.height / r.height) };
+    return { x: (src.clientX - r.left) * dpr, y: (src.clientY - r.top) * dpr };
   }
 
   function startDraw(e) { e.preventDefault(); saveState(); drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }
@@ -128,11 +133,11 @@ function renderNotes() {
     if (drawTool === 'eraser') {
       ctx.globalCompositeOperation = 'destination-out';
       ctx.strokeStyle = 'rgba(0,0,0,1)';
-      ctx.lineWidth = drawSize * 5;
+      ctx.lineWidth = drawSize * 5 * dpr;
     } else {
       ctx.globalCompositeOperation = 'source-over';
       ctx.strokeStyle = drawColor;
-      ctx.lineWidth = drawSize;
+      ctx.lineWidth = drawSize * dpr;
     }
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     ctx.stroke();
