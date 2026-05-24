@@ -40,6 +40,7 @@ function renderNotes() {
       if (!confirm('Delete this note?')) return;
       notesDB.notes = notesDB.notes.filter(n => n.id !== id);
       localStorage.removeItem('flightcheck-note-' + id);
+      localStorage.removeItem('flightcheck-note-bg-' + id);
       if (notesDB.activeNoteId === id) notesDB.activeNoteId = notesDB.notes[0].id;
       saveNotesDB();
       renderNotes();
@@ -63,6 +64,9 @@ function renderNotes() {
     }, note.name);
   };
 
+  const noteId = notesDB.activeNoteId;
+  const existingBg = getNoteBg(noteId);
+
   const contentEl = document.getElementById('content');
   contentEl.innerHTML = `
     <div id="draw-toolbar" style="display:flex;align-items:center;gap:6px;padding:0 0 12px;flex-wrap:wrap;">
@@ -73,17 +77,28 @@ function renderNotes() {
       <span style="font-size:11px;color:var(--text-faint);font-family:var(--mono);margin-left:8px;margin-right:2px;">TOOL</span>
       <button class="tool-btn" data-tool="pen" style="height:28px;padding:0 10px;border-radius:4px;border:1px solid var(--amber);background:var(--amber-glow);color:var(--amber);font-family:var(--mono);font-size:11px;cursor:pointer;">PEN</button>
       <button class="tool-btn" data-tool="eraser" style="height:28px;padding:0 10px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:var(--mono);font-size:11px;cursor:pointer;">ERASER</button>
+      <span style="font-size:11px;color:var(--text-faint);font-family:var(--mono);margin-left:8px;margin-right:2px;">BG</span>
+      <button id="bg-upload-btn" style="height:28px;padding:0 10px;border-radius:4px;border:1px solid ${existingBg ? 'var(--amber)' : 'var(--border)'};background:${existingBg ? 'var(--amber-glow)' : 'transparent'};color:${existingBg ? 'var(--amber)' : 'var(--text-muted)'};font-family:var(--mono);font-size:11px;cursor:pointer;" title="Upload background template"><i class="bi bi-image"></i> ${existingBg ? 'Replace' : 'Upload'}</button>
+      ${existingBg ? `<button id="bg-remove-btn" style="height:28px;padding:0 10px;border-radius:4px;border:1px solid var(--red);background:transparent;color:var(--red);font-family:var(--mono);font-size:11px;cursor:pointer;" title="Remove background"><i class="bi bi-x-lg"></i></button>` : ''}
     </div>
-    <canvas id="draw-canvas" style="display:block;width:100%;touch-action:none;cursor:crosshair;border-radius:var(--r);"></canvas>`;
+    <input type="file" id="note-bg-file" accept="image/*" style="display:none" />
+    <div id="canvas-wrap" style="position:relative;border-radius:var(--r);overflow:hidden;background:#1a1c18;">
+      <img id="note-bg-img" src="${existingBg || ''}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:top left;pointer-events:none;display:${existingBg ? 'block' : 'none'};" />
+      <canvas id="draw-canvas" style="display:block;width:100%;touch-action:none;cursor:crosshair;position:relative;"></canvas>
+    </div>`;
 
   const canvas = document.getElementById('draw-canvas');
   canvas.width = contentEl.clientWidth;
-  canvas.height = Math.max(contentEl.clientHeight - 52, 500);
+  canvas.height = Math.max(contentEl.clientHeight - 60, 500);
+  document.getElementById('canvas-wrap').style.height = canvas.height + 'px';
+
   const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#1a1c18';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  const saved = getNoteCanvas(notesDB.activeNoteId);
-  if (saved) { const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0); img.src = saved; }
+  const saved = getNoteCanvas(noteId);
+  if (saved) {
+    const img = new Image();
+    img.onload = () => ctx.drawImage(img, 0, 0);
+    img.src = saved;
+  }
 
   let drawing = false;
   let history = [];
@@ -91,7 +106,7 @@ function renderNotes() {
   document.querySelectorAll('.color-btn').forEach(b => b.style.borderColor = b.dataset.color === drawColor ? '#e8a020' : 'transparent');
   updateToolBtns();
 
-  function persistCanvas() { saveNoteCanvas(notesDB.activeNoteId, canvas.toDataURL()); }
+  function persistCanvas() { saveNoteCanvas(noteId, canvas.toDataURL()); }
 
   function saveState() {
     history.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
@@ -110,12 +125,25 @@ function renderNotes() {
     if (!drawing) return;
     const p = getPos(e);
     ctx.lineTo(p.x, p.y);
-    ctx.strokeStyle = drawTool === 'eraser' ? '#1a1c18' : drawColor;
-    ctx.lineWidth = drawTool === 'eraser' ? drawSize * 5 : drawSize;
+    if (drawTool === 'eraser') {
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.strokeStyle = 'rgba(0,0,0,1)';
+      ctx.lineWidth = drawSize * 5;
+    } else {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.strokeStyle = drawColor;
+      ctx.lineWidth = drawSize;
+    }
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     ctx.stroke();
   }
-  function endDraw(e) { e.preventDefault(); drawing = false; ctx.beginPath(); persistCanvas(); }
+  function endDraw(e) {
+    e.preventDefault();
+    drawing = false;
+    ctx.beginPath();
+    ctx.globalCompositeOperation = 'source-over';
+    persistCanvas();
+  }
 
   canvas.addEventListener('mousedown', startDraw);
   canvas.addEventListener('mousemove', draw);
@@ -126,14 +154,31 @@ function renderNotes() {
 
   document.getElementById('clear-canvas-btn').addEventListener('click', () => {
     saveState();
-    ctx.fillStyle = '#1a1c18';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     persistCanvas();
   });
 
   document.getElementById('undo-btn').addEventListener('click', () => {
     if (history.length) { ctx.putImageData(history.pop(), 0, 0); persistCanvas(); }
   });
+
+  document.getElementById('bg-upload-btn').addEventListener('click', () => {
+    document.getElementById('note-bg-file').click();
+  });
+
+  document.getElementById('note-bg-file').addEventListener('change', e => {
+    const file = e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => { saveNoteBg(noteId, ev.target.result); renderNotes(); };
+    reader.readAsDataURL(file);
+  });
+
+  const removeBgBtn = document.getElementById('bg-remove-btn');
+  if (removeBgBtn) {
+    removeBgBtn.addEventListener('click', () => { removeNoteBg(noteId); renderNotes(); });
+  }
 
   document.querySelectorAll('.color-btn').forEach(btn => {
     btn.addEventListener('click', () => {

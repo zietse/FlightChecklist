@@ -10,5 +10,8 @@ function getCL(plane, id) { return plane?.checklists.find(c => c.id === id); }
 function saveNotesDB() { localStorage.setItem('flightcheck-notes-db', JSON.stringify(notesDB)); }
 function saveNoteCanvas(id, url) { localStorage.setItem('flightcheck-note-' + id, url); }
 function getNoteCanvas(id) { return localStorage.getItem('flightcheck-note-' + id); }
+function saveNoteBg(id, url) { localStorage.setItem('flightcheck-note-bg-' + id, url); }
+function getNoteBg(id) { return localStorage.getItem('flightcheck-note-bg-' + id); }
+function removeNoteBg(id) { localStorage.removeItem('flightcheck-note-bg-' + id); }
 function notesUid() { return notesDB.nextId++; }
 function haptic() { if ('vibrate' in navigator) navigator.vibrate(10); }

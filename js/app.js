@@ -64,6 +64,26 @@ function deletePlane(id) {
   save(); renderSidebar(); renderMain();
 }
 
+// ── Confirm modal ─────────────────────────────────────
+let _confirmCb = null;
+function openConfirm(title, body, cb) {
+  _confirmCb = cb || null;
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-body').textContent = body;
+  document.getElementById('confirm-modal').style.display = 'flex';
+}
+document.getElementById('confirm-cancel').addEventListener('click', () => {
+  document.getElementById('confirm-modal').style.display = 'none'; _confirmCb = null;
+});
+document.getElementById('confirm-ok').addEventListener('click', () => {
+  document.getElementById('confirm-modal').style.display = 'none';
+  const cb = _confirmCb; _confirmCb = null;
+  if (cb) cb();
+});
+document.getElementById('confirm-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('confirm-modal')) { document.getElementById('confirm-modal').style.display = 'none'; _confirmCb = null; }
+});
+
 // ── Modal ──────────────────────────────────────────────
 let _modalCb = null;
 function openModal(title, cb, defaultVal) {

@@ -34,7 +34,7 @@ function renderMain() {
     btn.className = 'cl-tab' + (cl.id===activeChecklistId?' active':'');
     btn.dataset.id = cl.id;
     const dotColor = cl.color || null;
-    btn.innerHTML = `<span data-color-pick="${cl.id}" style="display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle;flex-shrink:0;background:${dotColor||'transparent'};border:1.5px solid ${dotColor?'transparent':'var(--border)'};cursor:pointer;"></span>${cl.name} <span class="badge">${done}/${cl.items.length}</span>`;
+    btn.innerHTML = `<span data-color-pick="${cl.id}" style="display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle;flex-shrink:0;background:${dotColor||'transparent'};border:1.5px solid ${dotColor?'transparent':'var(--border)'};cursor:pointer;"></span>${cl.name} <span class="badge">${done}/${cl.items.length}</span><span class="tab-del-btn" data-del-cl="${cl.id}" title="Delete section" role="button"><i class="bi bi-x"></i></span>`;
     tabsEl.appendChild(btn);
   });
   const addTab = document.createElement('button');
@@ -167,6 +167,25 @@ function deleteItem(itemId) {
 }
 
 document.getElementById('cl-tabs').addEventListener('click', e => {
+  const delCl = e.target.closest('[data-del-cl]');
+  if (delCl) {
+    e.stopPropagation();
+    const plane = getPlane(activePlaneId);
+    const cl = getCL(plane, +delCl.dataset.delCl);
+    if (!cl) return;
+    const itemCount = cl.items.length;
+    openConfirm(
+      'Delete section?',
+      `"${cl.name}" and all its ${itemCount} item${itemCount !== 1 ? 's' : ''} will be permanently deleted.`,
+      () => {
+        plane.checklists = plane.checklists.filter(c => c.id !== cl.id);
+        if (activeChecklistId === cl.id) activeChecklistId = plane.checklists[0]?.id || null;
+        save(); renderMain();
+      }
+    );
+    return;
+  }
+
   const colorPick = e.target.closest('[data-color-pick]');
   if (colorPick) {
     e.stopPropagation();
@@ -388,3 +407,4 @@ document.addEventListener('touchcancel', () => {
   _dragClone.remove(); _dragClone = null; _dragId = null;
   _clearDragHighlight(); _dragItemEls = null; renderMain();
 });
+
