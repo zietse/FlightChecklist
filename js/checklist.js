@@ -102,7 +102,7 @@ function renderMain() {
           <div class="cl-item-edit" id="edit-${item.id}">
             <input class="edit-text-input" type="text" value="${item.text}" placeholder="Step text" />
             <div class="cl-item-edit-row">
-              <input class="edit-value-input" type="text" value="${item.value||''}" placeholder="Expected value" />
+              <input class="edit-value-input" type="text" value="${item.value||''}" placeholder="Expected value" list="value-suggestions" />
               <button class="edit-save" data-save="${item.id}">Save</button>
               <button class="edit-cancel" data-cancel="${item.id}">Cancel</button>
             </div>
@@ -120,7 +120,7 @@ function renderMain() {
 
   html += `<div class="add-item-row">
     <input type="text" id="new-item-text" placeholder="New item…" />
-    <input type="text" id="new-item-value" class="val-in" placeholder="Expected value" />
+    <input type="text" id="new-item-value" class="val-in" placeholder="Expected value" list="value-suggestions" />
     <button class="add-item-btn" id="add-item-btn"><i class="bi bi-plus-lg"></i> Add</button>
   </div>`;
 

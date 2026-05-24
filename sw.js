@@ -1,5 +1,5 @@
 
-const CACHE = 'checklist-v16';
+const CACHE = 'checklist-v17';
 
 const ASSETS = [
   '/',
