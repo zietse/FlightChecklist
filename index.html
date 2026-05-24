@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-title" content="Flight Check" />
   <meta name="theme-color" content="#111210" />
   <title>Flight Check</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -29,7 +29,7 @@
     .sidebar { width:270px; min-width:270px; background:var(--bg2); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
     .sidebar-header { padding:20px 18px 16px; border-bottom:1px solid var(--border); }
     .app-title { font-family:var(--mono); font-size:17px; color:var(--amber); letter-spacing:2px; text-transform:uppercase; display:flex; align-items:center; gap:8px; }
-    .app-title .ti { font-size:20px; }
+    .app-title .bi { font-size:20px; }
     .app-sub { font-size:10px; color:var(--text-faint); letter-spacing:1px; text-transform:uppercase; margin-top:4px; font-family:var(--mono); }
     .sec-label { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-faint); font-family:var(--mono); padding:14px 18px 6px; }
     .sb-scroll { flex:1; overflow-y:auto; padding-bottom:12px; }
@@ -105,8 +105,8 @@
     .cl-item.important.checked { border-color:var(--red) !important; opacity:0.4; }
     .cl-checkbox { width:22px; height:22px; border-radius:4px; border:1.5px solid var(--text-faint); background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; transition:all 0.15s; }
     .cl-item.checked .cl-checkbox { background:var(--green); border-color:var(--green); }
-    .cl-checkbox .ti { color:white; font-size:13px; display:none; }
-    .cl-item.checked .cl-checkbox .ti { display:block; }
+    .cl-checkbox .bi { color:white; font-size:13px; display:none; }
+    .cl-item.checked .cl-checkbox .bi { display:block; }
     .cl-item-body { flex:1; min-width:0; }
     .cl-item-text { font-family:var(--mono); font-size:13px; color:var(--text); line-height:1.5; }
     .cl-item.checked .cl-item-text { text-decoration:line-through; color:var(--text-faint); }
@@ -142,13 +142,13 @@
 
     /* Empty */
     .empty-state { text-align:center; padding:4rem 2rem; color:var(--text-faint); }
-    .empty-state .ti { font-size:48px; display:block; margin-bottom:16px; color:var(--bg4); }
+    .empty-state .bi { font-size:48px; display:block; margin-bottom:16px; color:var(--bg4); }
     .empty-state h3 { font-size:16px; font-weight:600; color:var(--text-muted); margin-bottom:8px; }
     .empty-state p { font-size:13px; line-height:1.6; max-width:280px; margin:0 auto; }
 
     /* Complete banner */
     .complete-banner { display:flex; align-items:center; gap:14px; padding:14px 18px; background:var(--green-dim); border:1px solid var(--green); border-radius:var(--r); margin-bottom:18px; }
-    .complete-banner .ti { font-size:22px; color:var(--green); }
+    .complete-banner .bi { font-size:22px; color:var(--green); }
     .complete-banner h4 { font-size:13px; font-weight:700; color:var(--green); font-family:var(--mono); letter-spacing:1px; text-transform:uppercase; }
     .complete-banner p { font-size:12px; color:var(--text-muted); margin-top:2px; }
 
@@ -180,12 +180,12 @@
 <div class="layout">
   <div class="sidebar">
     <div class="sidebar-header">
-      <div class="app-title"><i class="ti ti-plane"></i> Flight Check</div>
+      <div class="app-title"><i class="bi bi-airplane"></i> Flight Check</div>
       <div class="app-sub">Pre-flight Checklists</div>
     </div>
     <div class="sec-label">Workspace</div>
     <div class="plane-row" id="notes-tab">
-      <div class="plane-icon"><i class="ti ti-notes"></i></div>
+      <div class="plane-icon"><i class="bi bi-journal-text"></i></div>
       <div class="plane-info">
         <div class="plane-name">Notes</div>
         <div class="plane-meta">Scratch pad</div>
@@ -195,12 +195,12 @@
     <div class="sb-scroll" id="plane-list"></div>
     <div class="add-row">
       <input type="text" id="new-plane-input" placeholder="New aircraft…" maxlength="30" />
-      <button class="icon-btn" id="add-plane-btn" title="Add aircraft"><i class="ti ti-plus"></i></button>
+      <button class="icon-btn" id="add-plane-btn" title="Add aircraft"><i class="bi bi-plus-lg"></i></button>
     </div>
     <div class="sidebar-footer">
-      <button class="footer-btn" id="export-btn"><i class="ti ti-download" style="font-size:13px"></i> Export</button>
-      <button class="footer-btn" id="import-btn"><i class="ti ti-upload" style="font-size:13px"></i> Import</button>
-      <button class="footer-btn" id="theme-btn" style="flex:none;width:38px;" title="Toggle light/dark mode"><i class="ti ti-sun" id="theme-icon" style="font-size:14px"></i></button>
+      <button class="footer-btn" id="export-btn"><i class="bi bi-download" style="font-size:13px"></i> Export</button>
+      <button class="footer-btn" id="import-btn"><i class="bi bi-upload" style="font-size:13px"></i> Import</button>
+      <button class="footer-btn" id="theme-btn" style="flex:none;width:38px;" title="Toggle light/dark mode"><i class="bi bi-sun" id="theme-icon" style="font-size:14px"></i></button>
     </div>
   </div>
   <input type="file" id="import-file" accept=".json" style="display:none" />
@@ -216,7 +216,7 @@
     </div>
     <div class="cl-tabs" id="cl-tabs"></div>
     <div class="content" id="content">
-      <div class="empty-state"><i class="ti ti-plane-tilt"></i><h3>No aircraft selected</h3><p>Select an aircraft from the sidebar.</p></div>
+      <div class="empty-state"><i class="bi bi-airplane"></i><h3>No aircraft selected</h3><p>Select an aircraft from the sidebar.</p></div>
     </div>
   </div>
 </div>
@@ -263,12 +263,12 @@ function renderSidebar() {
     const div = document.createElement('div');
     div.innerHTML = `
       <div class="plane-row ${plane.id===activePlaneId?'active':''}" data-id="${plane.id}">
-        <div class="plane-icon"><i class="ti ti-plane"></i></div>
+        <div class="plane-icon"><i class="bi bi-airplane"></i></div>
         <div class="plane-info">
           <div class="plane-name">${plane.name}</div>
           <div class="plane-meta">${plane.checklists.length} lists · ${done}/${total}</div>
         </div>
-        <button class="plane-del" data-del="${plane.id}"><i class="ti ti-trash"></i></button>
+        <button class="plane-del" data-del="${plane.id}"><i class="bi bi-trash"></i></button>
       </div>`;
     el.appendChild(div);
   });
@@ -287,14 +287,14 @@ function renderMain() {
     titleEl.textContent = 'Select an aircraft';
     subEl.textContent = '← Choose or add an aircraft';
     tabsEl.innerHTML = ''; actionsEl.innerHTML = '';
-    contentEl.innerHTML = '<div class="empty-state"><i class="ti ti-plane-tilt"></i><h3>No aircraft selected</h3><p>Select an aircraft from the sidebar.</p></div>';
+    contentEl.innerHTML = '<div class="empty-state"><i class="bi bi-airplane"></i><h3>No aircraft selected</h3><p>Select an aircraft from the sidebar.</p></div>';
     return;
   }
 
   titleEl.textContent = plane.name;
   subEl.textContent = `${plane.checklists.length} checklists · Always refer to POH`;
 
-  actionsEl.innerHTML = `<button class="pill-btn danger" id="reset-btn"><i class="ti ti-refresh"></i> Reset all</button>`;
+  actionsEl.innerHTML = `<button class="pill-btn danger" id="reset-btn"><i class="bi bi-arrow-clockwise"></i> Reset all</button>`;
   document.getElementById('reset-btn').addEventListener('click', () => {
     if (confirm('Reset all checklists for this aircraft?')) {
       plane.checklists.forEach(cl => cl.items.forEach(i => i.done = false));
@@ -314,7 +314,7 @@ function renderMain() {
   });
   const addTab = document.createElement('button');
   addTab.className = 'cl-tab-add'; addTab.title = 'New checklist';
-  addTab.innerHTML = '<i class="ti ti-plus"></i>';
+  addTab.innerHTML = '<i class="bi bi-plus-lg"></i>';
   addTab.addEventListener('click', openModal);
   tabsEl.appendChild(addTab);
 
@@ -323,9 +323,21 @@ function renderMain() {
   const cl = getCL(plane, activeChecklistId);
 
   if (!cl) {
-    contentEl.innerHTML = '<div class="empty-state"><i class="ti ti-list-check"></i><h3>No checklists</h3><p>Tap + to add a checklist.</p></div>';
+    contentEl.innerHTML = '<div class="empty-state"><i class="bi bi-list-check"></i><h3>No checklists</h3><p>Tap + to add a checklist.</p></div>';
     return;
   }
+
+  actionsEl.innerHTML += `
+    <button class="pill-btn" id="check-all-btn"><i class="bi bi-check2-all"></i> Complete</button>
+    <button class="pill-btn" id="uncheck-all-btn"><i class="bi bi-square"></i> Uncheck</button>`;
+  document.getElementById('check-all-btn').addEventListener('click', () => {
+    cl.items.forEach(i => i.done = true);
+    save(); renderSidebar(); renderMain();
+  });
+  document.getElementById('uncheck-all-btn').addEventListener('click', () => {
+    cl.items.forEach(i => i.done = false);
+    save(); renderSidebar(); renderMain();
+  });
 
   const done = cl.items.filter(i=>i.done).length;
   const total = cl.items.length;
@@ -338,14 +350,14 @@ function renderMain() {
     <span class="prog-pct ${complete?'complete':''}">${pct}%</span>
   </div>`;
 
-  if (complete) html += `<div class="complete-banner"><i class="ti ti-circle-check"></i><div><h4>Checklist complete</h4><p>All items verified. Safe flying!</p></div></div>`;
+  if (complete) html += `<div class="complete-banner"><i class="bi bi-check-circle"></i><div><h4>Checklist complete</h4><p>All items verified. Safe flying!</p></div></div>`;
 
   if (!cl.items.length) {
-    html += '<div class="empty-state" style="padding:2rem"><i class="ti ti-list-details"></i><h3>No items yet</h3><p>Add items below.</p></div>';
+    html += '<div class="empty-state" style="padding:2rem"><i class="bi bi-card-list"></i><h3>No items yet</h3><p>Add items below.</p></div>';
   } else {
     cl.items.forEach((item, idx) => {
       html += `<div class="cl-item ${item.done?'checked':''} ${item.important?'important':''}" data-item="${item.id}">
-        <button class="cl-checkbox" data-check="${item.id}" aria-label="Toggle"><i class="ti ti-check"></i></button>
+        <button class="cl-checkbox" data-check="${item.id}" aria-label="Toggle"><i class="bi bi-check"></i></button>
         <div class="cl-item-body">
           <div class="cl-item-text">${item.text}</div>
           ${item.value?`<div class="cl-item-value">&#8594; ${item.value}</div>`:''}
@@ -359,11 +371,11 @@ function renderMain() {
           </div>
         </div>
         <div class="cl-item-actions">
-          <button class="ia-btn" data-move-up="${item.id}" title="Move up" ${idx===0?'style="opacity:0.2;pointer-events:none"':''}><i class="ti ti-chevron-up"></i></button>
-          <button class="ia-btn" data-move-down="${item.id}" title="Move down" ${idx===cl.items.length-1?'style="opacity:0.2;pointer-events:none"':''}><i class="ti ti-chevron-down"></i></button>
-          <button class="ia-btn important-btn ${item.important?'on':''}" data-important="${item.id}" title="Mark important"><i class="ti ti-alert-triangle"></i></button>
-          <button class="ia-btn" data-edit="${item.id}" title="Edit"><i class="ti ti-pencil"></i></button>
-          <button class="ia-btn del-btn" data-del-item="${item.id}" title="Delete"><i class="ti ti-x"></i></button>
+          <button class="ia-btn" data-move-up="${item.id}" title="Move up" ${idx===0?'style="opacity:0.2;pointer-events:none"':''}><i class="bi bi-chevron-up"></i></button>
+          <button class="ia-btn" data-move-down="${item.id}" title="Move down" ${idx===cl.items.length-1?'style="opacity:0.2;pointer-events:none"':''}><i class="bi bi-chevron-down"></i></button>
+          <button class="ia-btn important-btn ${item.important?'on':''}" data-important="${item.id}" title="Mark important"><i class="bi bi-exclamation-triangle"></i></button>
+          <button class="ia-btn" data-edit="${item.id}" title="Edit"><i class="bi bi-pencil"></i></button>
+          <button class="ia-btn del-btn" data-del-item="${item.id}" title="Delete"><i class="bi bi-x-lg"></i></button>
         </div>
       </div>`;
     });
@@ -372,7 +384,7 @@ function renderMain() {
   html += `<div class="add-item-row">
     <input type="text" id="new-item-text" placeholder="New item…" />
     <input type="text" id="new-item-value" class="val-in" placeholder="Expected value" />
-    <button class="add-item-btn" id="add-item-btn"><i class="ti ti-plus"></i> Add</button>
+    <button class="add-item-btn" id="add-item-btn"><i class="bi bi-plus-lg"></i> Add</button>
   </div>`;
 
   contentEl.innerHTML = html;
@@ -596,8 +608,8 @@ function renderNotes() {
   document.getElementById('main-title').textContent = 'Notes';
   document.getElementById('main-sub').textContent = 'Scratch pad';
   document.getElementById('top-actions').innerHTML = `
-    <button class="pill-btn" id="undo-btn"><i class="ti ti-arrow-back-up"></i> Undo</button>
-    <button class="pill-btn danger" id="clear-canvas-btn"><i class="ti ti-trash"></i> Clear</button>`;
+    <button class="pill-btn" id="undo-btn"><i class="bi bi-arrow-counterclockwise"></i> Undo</button>
+    <button class="pill-btn danger" id="clear-canvas-btn"><i class="bi bi-trash"></i> Clear</button>`;
 
   // Note tabs
   const tabsEl = document.getElementById('cl-tabs');
@@ -614,7 +626,7 @@ function renderNotes() {
   const addNoteBtn = document.createElement('button');
   addNoteBtn.className = 'cl-tab-add';
   addNoteBtn.title = 'New note';
-  addNoteBtn.innerHTML = '<i class="ti ti-plus"></i>';
+  addNoteBtn.innerHTML = '<i class="bi bi-plus-lg"></i>';
   addNoteBtn.addEventListener('click', () => openModal('New note', name => {
     const note = { id: notesUid(), name: name.trim() || ('Note ' + (notesDB.notes.length + 1)) };
     notesDB.notes.push(note);
@@ -772,7 +784,7 @@ document.getElementById('notes-tab').addEventListener('click', () => {
 // ── Theme ──────────────────────────────────────────────
 function applyTheme(light) {
   document.body.classList.toggle('light', light);
-  document.getElementById('theme-icon').className = light ? 'ti ti-moon' : 'ti ti-sun';
+  document.getElementById('theme-icon').className = light ? 'bi bi-moon' : 'bi bi-sun';
 }
 if (localStorage.getItem('flightcheck-theme') === 'light') applyTheme(true);
 document.getElementById('theme-btn').addEventListener('click', () => {
