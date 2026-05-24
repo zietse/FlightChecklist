@@ -1,10 +1,15 @@
-const CACHE = 'checklist-v10';
+const CACHE = 'checklist-v12';
 const ASSETS = [
   '/',
   '/index.html',
+  '/style.css',
   '/seed.json',
   '/manifest.json',
-  '/icon.svg'
+  '/icon.svg',
+  '/js/state.js',
+  '/js/checklist.js',
+  '/js/notes.js',
+  '/js/app.js'
 ];
 
 self.addEventListener('install', e => {
