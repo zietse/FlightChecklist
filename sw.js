@@ -1,7 +1,8 @@
-const CACHE = 'checklist-v10';
+const CACHE = 'checklist-v11';
 const ASSETS = [
   '/',
   '/index.html',
+  '/style.css',
   '/seed.json',
   '/manifest.json',
   '/icon.svg'
