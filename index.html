@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -194,7 +194,7 @@
     <div class="sec-label">Aircraft</div>
     <div class="sb-scroll" id="plane-list"></div>
     <div class="add-row">
-      <input type="text" id="new-plane-input" placeholder="New aircraftâ€¦" maxlength="30" />
+      <input type="text" id="new-plane-input" placeholder="New aircraft…" maxlength="30" />
       <button class="icon-btn" id="add-plane-btn" title="Add aircraft"><i class="ti ti-plus"></i></button>
     </div>
     <div class="sidebar-footer">
@@ -210,7 +210,7 @@
     <div class="top-bar">
       <div class="top-bar-left">
         <h2 id="main-title">Select an aircraft</h2>
-        <p id="main-sub">â† Choose an aircraft to get started</p>
+        <p id="main-sub">← Choose an aircraft to get started</p>
       </div>
       <div class="top-actions" id="top-actions"></div>
     </div>
@@ -233,7 +233,7 @@
 </div>
 
 <script>
-// â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── State ──────────────────────────────────────────────
 let db = null;
 let activePlaneId = null;
 let activeChecklistId = null;
@@ -248,7 +248,7 @@ function saveNoteCanvas(id, url) { localStorage.setItem('flightcheck-note-' + id
 function getNoteCanvas(id) { return localStorage.getItem('flightcheck-note-' + id); }
 function notesUid() { return notesDB.nextId++; }
 
-// â”€â”€ Render sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Render sidebar ─────────────────────────────────────
 function renderSidebar() {
   const el = document.getElementById('plane-list');
   el.innerHTML = '';
@@ -265,7 +265,7 @@ function renderSidebar() {
         <div class="plane-icon"><i class="ti ti-plane"></i></div>
         <div class="plane-info">
           <div class="plane-name">${plane.name}</div>
-          <div class="plane-meta">${plane.checklists.length} lists Â· ${done}/${total}</div>
+          <div class="plane-meta">${plane.checklists.length} lists · ${done}/${total}</div>
         </div>
         <button class="plane-del" data-del="${plane.id}"><i class="ti ti-trash"></i></button>
       </div>`;
@@ -273,7 +273,7 @@ function renderSidebar() {
   });
 }
 
-// â”€â”€ Render main â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Render main ────────────────────────────────────────
 function renderMain() {
   const plane = getPlane(activePlaneId);
   const titleEl = document.getElementById('main-title');
@@ -284,14 +284,14 @@ function renderMain() {
 
   if (!plane) {
     titleEl.textContent = 'Select an aircraft';
-    subEl.textContent = 'â† Choose or add an aircraft';
+    subEl.textContent = '← Choose or add an aircraft';
     tabsEl.innerHTML = ''; actionsEl.innerHTML = '';
     contentEl.innerHTML = '<div class="empty-state"><i class="ti ti-plane-tilt"></i><h3>No aircraft selected</h3><p>Select an aircraft from the sidebar.</p></div>';
     return;
   }
 
   titleEl.textContent = plane.name;
-  subEl.textContent = `${plane.checklists.length} checklists Â· Always refer to POH`;
+  subEl.textContent = `${plane.checklists.length} checklists · Always refer to POH`;
 
   actionsEl.innerHTML = `<button class="pill-btn danger" id="reset-btn"><i class="ti ti-refresh"></i> Reset all</button>`;
   document.getElementById('reset-btn').addEventListener('click', () => {
@@ -347,7 +347,7 @@ function renderMain() {
         <button class="cl-checkbox" data-check="${item.id}" aria-label="Toggle"><i class="ti ti-check"></i></button>
         <div class="cl-item-body">
           <div class="cl-item-text">${item.text}</div>
-          ${item.value?`<div class="cl-item-value">→ ${item.value}</div>`:’’}
+          ${item.value?`<div class="cl-item-value">&#8594; ${item.value}</div>`:''}
           <div class="cl-item-edit" id="edit-${item.id}">
             <input class="edit-text-input" type="text" value="${item.text}" placeholder="Step text" />
             <div class="cl-item-edit-row">
@@ -369,7 +369,7 @@ function renderMain() {
   }
 
   html += `<div class="add-item-row">
-    <input type="text" id="new-item-text" placeholder="New itemâ€¦" />
+    <input type="text" id="new-item-text" placeholder="New item…" />
     <input type="text" id="new-item-value" class="val-in" placeholder="Expected value" />
     <button class="add-item-btn" id="add-item-btn"><i class="ti ti-plus"></i> Add</button>
   </div>`;
@@ -379,7 +379,7 @@ function renderMain() {
   document.getElementById('new-item-text').addEventListener('keydown', e => { if(e.key==='Enter') addItem(); });
 }
 
-// â”€â”€ Actions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Actions ────────────────────────────────────────────
 function addPlane(name) {
   if (!name.trim()) return;
   const plane = { id: uid(), name: name.trim(), checklists: [] };
@@ -431,7 +431,7 @@ function deleteItem(itemId) {
   save(); renderSidebar(); renderMain();
 }
 
-// â”€â”€ Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Modal ──────────────────────────────────────────────
 let _modalCb = null;
 function openModal(title, cb, defaultVal) {
   _modalCb = cb || null;
@@ -451,7 +451,7 @@ document.getElementById('modal-cancel').addEventListener('click', closeModal);
 document.getElementById('modal').addEventListener('click', e => { if(e.target===document.getElementById('modal')) closeModal(); });
 document.getElementById('modal-input').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('modal-confirm').click(); });
 
-// â”€â”€ Event delegation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Event delegation ───────────────────────────────────
 document.getElementById('plane-list').addEventListener('click', e => {
   const del = e.target.closest('[data-del]');
   if (del) { e.stopPropagation(); deletePlane(+del.dataset.del); return; }
@@ -542,14 +542,14 @@ document.getElementById('new-plane-input').addEventListener('keydown', e => {
   if (e.key==='Enter') document.getElementById('add-plane-btn').click();
 });
 
-// â”€â”€ Toast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Toast ──────────────────────────────────────────────
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// â”€â”€ Export â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Export ─────────────────────────────────────────────
 document.getElementById('export-btn').addEventListener('click', () => {
   const json = JSON.stringify(db, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
@@ -559,10 +559,10 @@ document.getElementById('export-btn').addEventListener('click', () => {
   a.download = 'flightcheck-backup-' + new Date().toISOString().slice(0,10) + '.json';
   a.click();
   URL.revokeObjectURL(url);
-  showToast('Backup exported âœ“');
+  showToast('Backup exported ✓');
 });
 
-// â”€â”€ Import â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Import ─────────────────────────────────────────────
 document.getElementById('import-btn').addEventListener('click', () => {
   document.getElementById('import-file').click();
 });
@@ -579,16 +579,16 @@ document.getElementById('import-file').addEventListener('change', e => {
       activePlaneId = db.planes[0]?.id || null;
       activeChecklistId = db.planes[0]?.checklists[0]?.id || null;
       save(); renderSidebar(); renderMain();
-      showToast('Backup imported âœ“');
+      showToast('Backup imported ✓');
     } catch {
-      showToast('Invalid backup file âœ—');
+      showToast('Invalid backup file ✗');
     }
   };
   reader.readAsText(file);
   e.target.value = '';
 });
 
-// â”€â”€ Notes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Notes ──────────────────────────────────────────────
 let drawColor = '#e8e6df', drawSize = 4, drawTool = 'pen';
 
 function renderNotes() {
@@ -768,7 +768,7 @@ document.getElementById('notes-tab').addEventListener('click', () => {
   renderNotes();
 });
 
-// â”€â”€ Theme â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Theme ──────────────────────────────────────────────
 function applyTheme(light) {
   document.body.classList.toggle('light', light);
   document.getElementById('theme-icon').className = light ? 'ti ti-moon' : 'ti ti-sun';
@@ -780,7 +780,7 @@ document.getElementById('theme-btn').addEventListener('click', () => {
   applyTheme(isLight);
 });
 
-// â”€â”€ Init â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Init ───────────────────────────────────────────────
 (async () => {
   const seed = await fetch('seed.json').then(r => r.json());
   db = JSON.parse(localStorage.getItem('flightcheck-db') || 'null');
