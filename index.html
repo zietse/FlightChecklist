@@ -250,6 +250,7 @@ function notesUid() { return notesDB.nextId++; }
 
 // ── Render sidebar ─────────────────────────────────────
 function renderSidebar() {
+  document.getElementById('notes-tab').classList.remove('active');
   const el = document.getElementById('plane-list');
   el.innerHTML = '';
   if (!db.planes.length) {
