@@ -327,9 +327,9 @@ function renderMain() {
     return;
   }
 
-  actionsEl.innerHTML += `
+  actionsEl.insertAdjacentHTML('beforeend', `
     <button class="pill-btn" id="check-all-btn"><i class="bi bi-check2-all"></i> Complete</button>
-    <button class="pill-btn" id="uncheck-all-btn"><i class="bi bi-square"></i> Uncheck</button>`;
+    <button class="pill-btn" id="uncheck-all-btn"><i class="bi bi-square"></i> Uncheck</button>`);
   document.getElementById('check-all-btn').addEventListener('click', () => {
     cl.items.forEach(i => i.done = true);
     save(); renderSidebar(); renderMain();
