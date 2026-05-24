@@ -1,4 +1,6 @@
+
 const CACHE = 'checklist-v12';
+
 const ASSETS = [
   '/',
   '/index.html',
