@@ -782,10 +782,28 @@ document.getElementById('theme-btn').addEventListener('click', () => {
 
 // â”€â”€ Init â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 (async () => {
+  const seed = await fetch('seed.json').then(r => r.json());
   db = JSON.parse(localStorage.getItem('flightcheck-db') || 'null');
   if (!db) {
-    const seed = await fetch('seed.json').then(r => r.json());
     db = JSON.parse(JSON.stringify(seed));
+  } else {
+    let changed = false;
+    const knownPlaneIds = new Set(db.planes.map(p => p.id));
+    for (const seedPlane of seed.planes) {
+      if (!knownPlaneIds.has(seedPlane.id)) {
+        db.planes.push(JSON.parse(JSON.stringify(seedPlane)));
+        changed = true;
+      } else {
+        const userPlane = db.planes.find(p => p.id === seedPlane.id);
+        const knownClIds = new Set(userPlane.checklists.map(cl => cl.id));
+        const newCls = seedPlane.checklists.filter(cl => !knownClIds.has(cl.id));
+        if (newCls.length) {
+          userPlane.checklists.push(...JSON.parse(JSON.stringify(newCls)));
+          changed = true;
+        }
+      }
+    }
+    if (changed) save();
   }
   activePlaneId = db.planes[0]?.id || null;
   activeChecklistId = db.planes[0]?.checklists[0]?.id || null;
