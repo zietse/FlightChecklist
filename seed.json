@@ -303,18 +303,18 @@
         },
         {
           "id": 33, "name": "Engine Start", "items": [
-            {"id":2401,"text":"Brakes","value":"HOLD","done":false},
-            {"id":2402,"text":"Strobe light","value":"ON","done":false},
-            {"id":2403,"text":"Electrical fuel pump","value":"ON","done":false},
-            {"id":2404,"text":"Power lever","value":"IDLE","done":false},
-            {"id":2405,"text":"Key","value":"READY","done":false},
-            {"id":2406,"text":"Engine master","value":"ON","done":false},
-            {"id":2407,"text":"FADEC lights","value":"CHECK OFF","done":false},
-            {"id":2408,"text":"Glow light","value":"ON THEN OFF","done":false},
-            {"id":2409,"text":"Propeller area","value":"CLEAR","done":false},
-            {"id":2410,"text":"Starter","value":"ON","done":false},
-            {"id":2411,"text":"Oil pressure (min 1 bar / 3 sec)","value":"CHECKED","done":false},
-            {"id":2412,"text":"RPM","value":"±890","done":false}
+            {"id":2401,"text":"Brakes","value":"HOLD","done":false, "important": true},
+            {"id":2402,"text":"Strobe light","value":"ON","done":false, "important": true},
+            {"id":2403,"text":"Electrical fuel pump","value":"ON","done":false, "important": true},
+            {"id":2404,"text":"Power lever","value":"IDLE","done":false, "important": true},
+            {"id":2405,"text":"Key","value":"READY","done":false, "important": true},
+            {"id":2406,"text":"Engine master","value":"ON","done":false, "important": true},
+            {"id":2407,"text":"FADEC lights","value":"CHECK OFF","done":false, "important": true},
+            {"id":2408,"text":"Glow light","value":"ON THEN OFF","done":false, "important": true},
+            {"id":2409,"text":"Propeller area","value":"CLEAR","done":false, "important": true},
+            {"id":2410,"text":"Starter","value":"ON","done":false, "important": true},
+            {"id":2411,"text":"Oil pressure (min 1 bar / 3 sec)","value":"CHECKED","done":false, "important": true},
+            {"id":2412,"text":"RPM","value":"±890","done":false, "important": true}
           ]
         },
         {
@@ -341,23 +341,23 @@
         },
         {
           "id": 35, "name": "Taxi", "items": [
-            {"id":2601,"text":"Landing light","value":"IF APPLICABLE","done":false},
-            {"id":2602,"text":"Parking brake","value":"OFF","done":false},
-            {"id":2603,"text":"Brakes","value":"CHECKED","done":false},
-            {"id":2604,"text":"Direction & attitude indicator","value":"CHECKED","done":false},
-            {"id":2605,"text":"Compass","value":"CHECKED","done":false}
+            {"id":2601,"text":"Landing light","value":"IF APPLICABLE","done":false, "important": true},
+            {"id":2602,"text":"Parking brake","value":"OFF","done":false, "important": true},
+            {"id":2603,"text":"Brakes","value":"CHECKED","done":false, "important": true},
+            {"id":2604,"text":"Direction & attitude indicator","value":"CHECKED","done":false, "important": true},
+            {"id":2605,"text":"Compass","value":"CHECKED","done":false, "important": true}
           ]
         },
         {
           "id": 36, "name": "Engine Run-up", "items": [
-            {"id":2701,"text":"Parking brake","value":"SET","done":false},
-            {"id":2702,"text":"Nose","value":"INTO THE WIND","done":false},
-            {"id":2703,"text":"Area behind","value":"CLEAR","done":false},
-            {"id":2704,"text":"Brakes","value":"HOLD","done":false},
-            {"id":2705,"text":"Power lever","value":"IDLE","done":false},
-            {"id":2706,"text":"FADEC test","value":"PERFORMED","done":false},
-            {"id":2707,"text":"Engine instruments","value":"ALL GREEN","done":false},
-            {"id":2708,"text":"Voltmeter","value":"GREEN","done":false}
+            {"id":2701,"text":"Parking brake","value":"SET","done":false, "important": true},
+            {"id":2702,"text":"Nose","value":"INTO THE WIND","done":false, "important": true},
+            {"id":2703,"text":"Area behind","value":"CLEAR","done":false, "important": true},
+            {"id":2704,"text":"Brakes","value":"HOLD","done":false, "important": true},
+            {"id":2705,"text":"Power lever","value":"IDLE","done":false, "important": true},
+            {"id":2706,"text":"FADEC test","value":"PERFORMED","done":false, "important": true},
+            {"id":2707,"text":"Engine instruments","value":"ALL GREEN","done":false, "important": true},
+            {"id":2708,"text":"Voltmeter","value":"GREEN","done":false, "important": true}
           ]
         },
         {
@@ -376,20 +376,20 @@
         },
         {
           "id": 38, "name": "Line-up", "items": [
-            {"id":2901,"text":"Parking brake","value":"OFF","done":false},
-            {"id":2902,"text":"Approach area","value":"CLEAR","done":false},
-            {"id":2903,"text":"Pitot heat","value":"AS REQUIRED","done":false},
-            {"id":2904,"text":"Landing light","value":"ON","done":false},
-            {"id":2905,"text":"Strobe lights","value":"ON","done":false},
-            {"id":2906,"text":"Transponder","value":"ALT","done":false},
-            {"id":2907,"text":"Elevation & QFU","value":"CHECKED","done":false}
+            {"id":2901,"text":"Parking brake","value":"OFF","done":false, "important": true},
+            {"id":2902,"text":"Approach area","value":"CLEAR","done":false, "important": true},
+            {"id":2903,"text":"Pitot heat","value":"AS REQUIRED","done":false, "important": true},
+            {"id":2904,"text":"Landing light","value":"ON","done":false, "important": true},
+            {"id":2905,"text":"Strobe lights","value":"ON","done":false, "important": true},
+            {"id":2906,"text":"Transponder","value":"ALT","done":false, "important": true},
+            {"id":2907,"text":"Elevation & QFU","value":"CHECKED","done":false, "important": true}
           ]
         },
         {
           "id": 39, "name": "Take-off", "items": [
-            {"id":3001,"text":"Engine parameters","value":"GREEN","done":false},
-            {"id":3002,"text":"Load (min 94% / 2240 RPM)","value":"CHECKED","done":false},
-            {"id":3003,"text":"Airspeed","value":"ALIVE","done":false},
+            {"id":3001,"text":"Engine parameters","value":"GREEN","done":false, "important": true},
+            {"id":3002,"text":"Load (min 94% / 2240 RPM)","value":"CHECKED","done":false, "important": true},
+            {"id":3003,"text":"Airspeed","value":"ALIVE","done":false, "important": true},
             {"id":3004,"text":"Vx best angle","value":"65 KTS","done":false},
             {"id":3005,"text":"Vy best rate","value":"78 KTS","done":false},
             {"id":3006,"text":"Vg best glide","value":"78 KTS","done":false},
@@ -402,28 +402,42 @@
           ]
         },
         {
-          "id": 40, "name": "Approach", "items": [
-            {"id":3101,"text":"Altimeter","value":"SET","done":false},
-            {"id":3102,"text":"Directional gyro","value":"ALIGN","done":false},
-            {"id":3103,"text":"Landing light","value":"ON","done":false},
-            {"id":3104,"text":"Electrical fuel pump","value":"ON","done":false},
-            {"id":3105,"text":"Approach briefing","value":"COMPLETED","done":false}
+          "id": 40, "name": "After Take-off", "items": [
+            {"id":3001,"text":"Brakes","value":"apply","done":false, "important": true},
+            {"id":3002,"text":"Engine instruments","value":"GREEN","done":false, "important": true},
+            {"id":3003,"text":"Climb Rate","value":"POSITIVE (when clear of obstacles < 200ft agl)","done":false, "important": true},
+            {"id":3004,"text":"Flaps","value":"Up (When > 1000ft agl)","done":false, "important": true},
+            {"id":3005,"text":"Electrical fuel pump","value":"off","done":false, "important": true},
+            {"id":3006,"text":"Landing light","value":"off","done":false, "important": true}
           ]
         },
         {
-          "id": 41, "name": "Landing", "items": [
-            {"id":3201,"text":"Approach","value":"CLEAR","done":false},
-            {"id":3202,"text":"Brakes","value":"CHECKED","done":false},
-            {"id":3203,"text":"Flaps","value":"SET","done":false},
-            {"id":3204,"text":"After landing — Flaps","value":"UP","done":false},
-            {"id":3205,"text":"After landing — Electrical fuel pump","value":"OFF","done":false},
-            {"id":3206,"text":"After landing — Landing light","value":"OFF","done":false},
-            {"id":3207,"text":"After landing — Pitot heat","value":"OFF","done":false},
-            {"id":3208,"text":"After landing — Transponder","value":"SBY","done":false}
+          "id": 41, "name": "Approach", "items": [
+            {"id":3101,"text":"Altimeter","value":"SET","done":false, "important": true},
+            {"id":3102,"text":"Directional gyro","value":"ALIGN","done":false, "important": true},
+            {"id":3103,"text":"Landing light","value":"ON","done":false, "important": true},
+            {"id":3104,"text":"Electrical fuel pump","value":"ON","done":false, "important": true},
+            {"id":3105,"text":"Approach briefing","value":"COMPLETED","done":false, "important": true}
           ]
         },
         {
-          "id": 42, "name": "Shutdown", "items": [
+          "id": 42, "name": "Landing", "items": [
+            {"id":3201,"text":"Approach","value":"CLEAR","done":false, "important": true},
+            {"id":3202,"text":"Brakes","value":"CHECKED","done":false, "important": true},
+            {"id":3203,"text":"Flaps","value":"SET","done":false, "important": true}
+          ]
+        },
+        {
+           "id": 43, "name": "After landing", "items": [
+            {"id":3204,"text":"Flaps","value":"UP","done":false, "important": true},
+            {"id":3205,"text":"Electrical fuel pump","value":"OFF","done":false, "important": true},
+            {"id":3206,"text":"Landing light","value":"OFF","done":false, "important": true},
+            {"id":3207,"text":"Pitot heat","value":"OFF","done":false, "important": true},
+            {"id":3208,"text":"Transponder","value":"SBY","done":false, "important": true}
+           ]
+        },
+        {
+          "id": 44, "name": "Shutdown", "items": [
             {"id":3301,"text":"Power lever (min 1 min)","value":"IDLE","done":false},
             {"id":3302,"text":"Avionics master switch","value":"OFF","done":false},
             {"id":3303,"text":"Flaps","value":"DOWN","done":false},
