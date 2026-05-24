@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -194,7 +194,7 @@
     <div class="sec-label">Aircraft</div>
     <div class="sb-scroll" id="plane-list"></div>
     <div class="add-row">
-      <input type="text" id="new-plane-input" placeholder="New aircraft…" maxlength="30" />
+      <input type="text" id="new-plane-input" placeholder="New aircraftâ€¦" maxlength="30" />
       <button class="icon-btn" id="add-plane-btn" title="Add aircraft"><i class="ti ti-plus"></i></button>
     </div>
     <div class="sidebar-footer">
@@ -210,7 +210,7 @@
     <div class="top-bar">
       <div class="top-bar-left">
         <h2 id="main-title">Select an aircraft</h2>
-        <p id="main-sub">← Choose an aircraft to get started</p>
+        <p id="main-sub">â† Choose an aircraft to get started</p>
       </div>
       <div class="top-actions" id="top-actions"></div>
     </div>
@@ -233,452 +233,10 @@
 </div>
 
 <script>
-// ── Seed data ──────────────────────────────────────────────────────────────
-const SEED = {
-  nextId: 1000,
-  planes: [
-    {
-      id: 1,
-      name: "PH-DYX · DR401-155 CDI",
-      checklists: [
-        {
-          id: 10, name: "Pre-flight Internal", items: [
-            {id:101,text:"Engine master switch",value:"OFF",done:false},
-            {id:102,text:"Avionics master switch",value:"OFF",done:false},
-            {id:103,text:"Controls",value:"FREE",done:false},
-            {id:104,text:"Battery switch",value:"ON",done:false},
-            {id:105,text:"Flaps",value:"CHECKED",done:false},
-            {id:106,text:"Trim",value:"CHECKED",done:false},
-            {id:107,text:"Fuel quantity",value:"CHECKED",done:false},
-            {id:108,text:"Coolant level light",value:"OFF",done:false},
-            {id:109,text:"— Night flight: Strobe light",value:"CHECKED OPERATIONAL",done:false},
-            {id:110,text:"— Night flight: Navigation lights",value:"CHECKED OPERATIONAL",done:false},
-            {id:111,text:"— Night flight: Landing light",value:"CHECKED OPERATIONAL",done:false},
-            {id:112,text:"— Night flight: Taxi light",value:"CHECKED OPERATIONAL",done:false},
-            {id:113,text:"— Night flight: Interior lights",value:"CHECKED OPERATIONAL",done:false},
-            {id:114,text:"— Night flight: Day/night switch",value:"CHECKED & SET",done:false},
-            {id:115,text:"— Night flight: Emergency torchlight",value:"ON BOARD",done:false},
-            {id:116,text:"Fuel (3 drains)",value:"DRAINED",done:false},
-            {id:117,text:"Oil",value:"CHECKED",done:false},
-            {id:118,text:"Battery switch",value:"OFF",done:false},
-            {id:119,text:"Aircraft documents",value:"ON BOARD",done:false},
-            {id:120,text:"Luggage",value:"PROPERLY STOWED",done:false},
-          ]
-        },
-        {
-          id: 11, name: "Pre-flight External", items: [
-            {id:201,text:"Fuel filler cap",value:"IN PLACE & SECURED",done:false},
-            {id:202,text:"Fuel tank vents",value:"FREE",done:false},
-            {id:203,text:"LH static",value:"CLEAR",done:false},
-            {id:204,text:"Main fuel tank",value:"DRAINED & CHECKED",done:false},
-            {id:205,text:"Aux fuel tank drain (if app)",value:"DRAINED & CHECKED",done:false},
-            {id:206,text:"Stabilator",value:"CHECKED",done:false},
-            {id:207,text:"Rudder",value:"CHECKED",done:false},
-            {id:208,text:"RH static",value:"CLEAR",done:false},
-            {id:209,text:"RH flap & aileron",value:"CHECKED",done:false},
-            {id:210,text:"RH navigation lights",value:"CHECKED",done:false},
-            {id:211,text:"Stall warning",value:"CHECKED",done:false},
-            {id:212,text:"RH landing gear",value:"CHECKED",done:false},
-            {id:213,text:"Fuel filter",value:"DRAINED & CHECKED",done:false},
-            {id:214,text:"Exhaust pipe",value:"RIGID",done:false},
-            {id:215,text:"Engine cowl attachments",value:"CHECKED",done:false},
-            {id:216,text:"Propeller",value:"CHECKED",done:false},
-            {id:217,text:"Propeller hub",value:"NO PLAY",done:false},
-            {id:218,text:"Spinner",value:"CHECKED",done:false},
-            {id:219,text:"Air inlets",value:"CLEAR",done:false},
-            {id:220,text:"Gear box oil level",value:"CHECKED",done:false},
-            {id:221,text:"Nose gear",value:"CHECKED",done:false},
-            {id:222,text:"Engine oil",value:"CHECKED",done:false},
-            {id:223,text:"Canopy",value:"CLEAN",done:false},
-            {id:224,text:"LH landing gear",value:"CHECKED",done:false},
-            {id:225,text:"Pitot",value:"CLEAN",done:false},
-            {id:226,text:"Lights",value:"CHECKED",done:false},
-            {id:227,text:"LH nav lights",value:"CHECKED",done:false},
-            {id:228,text:"LH flap & aileron",value:"CHECKED",done:false},
-          ]
-        },
-        {
-          id: 12, name: "Before Start", items: [
-            {id:301,text:"Canopy",value:"CLOSED & LOCKED",done:false},
-            {id:302,text:"Parking brake",value:"SET",done:false},
-            {id:303,text:"Seats & seatbelts",value:"SET",done:false},
-            {id:304,text:"Briefing",value:"COMPLETED",done:false},
-            {id:305,text:"Flight controls",value:"FREE & CORRECT",done:false},
-            {id:306,text:"Avionic master",value:"OFF",done:false},
-            {id:307,text:"Battery master",value:"ON",done:false},
-            {id:308,text:"CED auto-test",value:"MONITOR",done:false},
-            {id:309,text:"Alternator",value:"ON",done:false},
-            {id:310,text:"Annunciator panel",value:"CHECKED",done:false},
-            {id:311,text:"ELT",value:"ARMED",done:false},
-            {id:312,text:"Circuit breakers",value:"ALL IN",done:false},
-            {id:313,text:"Cabin heat",value:"OFF",done:false},
-            {id:314,text:"Elevator trim",value:"CHECKED & SET",done:false},
-            {id:315,text:"Fuel level & temp (min -30°C)",value:"CHECKED",done:false},
-            {id:316,text:"Electrical switches",value:"OFF",done:false},
-            {id:317,text:"Alternate air",value:"CHECKED & CLOSED",done:false},
-            {id:318,text:"Fuel valve",value:"OPEN",done:false},
-          ]
-        },
-        {
-          id: 13, name: "Engine Start", items: [
-            {id:401,text:"Brakes",value:"HOLD",done:false},
-            {id:402,text:"Strobe light",value:"ON",done:false},
-            {id:403,text:"Electrical fuel pump",value:"ON",done:false},
-            {id:404,text:"Power lever",value:"IDLE",done:false},
-            {id:405,text:"Key",value:"READY",done:false},
-            {id:406,text:"Engine master",value:"ON",done:false},
-            {id:407,text:"FADEC lights",value:"CHECK OFF",done:false},
-            {id:408,text:"Glow light",value:"ON THEN OFF",done:false},
-            {id:409,text:"Propeller area",value:"CLEAR",done:false},
-            {id:410,text:"Starter",value:"ON",done:false},
-            {id:411,text:"Oil pressure (min 1 bar / 3 sec)",value:"CHECKED",done:false},
-            {id:412,text:"RPM",value:"±890",done:false},
-          ]
-        },
-        {
-          id: 14, name: "After Start", items: [
-            {id:501,text:"Electrical fuel pump",value:"OFF",done:false},
-            {id:502,text:"Caution light",value:"ACKNOWLEDGE",done:false},
-            {id:503,text:"Alternator light",value:"CHECKED OFF",done:false},
-            {id:504,text:"FADEC backup battery test — Alternator switch",value:"OFF",done:false},
-            {id:505,text:"FADEC backup battery test — Battery switch",value:"OFF >10 SEC",done:false},
-            {id:506,text:"FADEC backup battery test — Engine",value:"NORMALLY",done:false},
-            {id:507,text:"FADEC backup battery test — FADEC lights",value:"OFF",done:false},
-            {id:508,text:"FADEC backup battery test — Battery switch",value:"ON",done:false},
-            {id:509,text:"FADEC backup battery test — Alternator switch",value:"ON",done:false},
-            {id:510,text:"Engine instruments",value:"CHECKED",done:false},
-            {id:511,text:"Voltage",value:">14V",done:false},
-            {id:512,text:"Avionics master",value:"ON",done:false},
-            {id:513,text:"ATIS (if applicable)",value:"OBTAIN",done:false},
-            {id:514,text:"Flight instruments",value:"CHECKED",done:false},
-            {id:515,text:"Altimeter",value:"SET",done:false},
-            {id:516,text:"Alternate static",value:"CHECKED & OFF",done:false},
-            {id:517,text:"Radios and navaids",value:"SET",done:false},
-            {id:518,text:"Engine warm up",value:"PERFORMED",done:false},
-          ]
-        },
-        {
-          id: 15, name: "Taxi", items: [
-            {id:601,text:"Taxi light",value:"ON",done:false},
-            {id:602,text:"Parking brake",value:"OFF",done:false},
-            {id:603,text:"Brakes",value:"CHECKED",done:false},
-            {id:604,text:"Direction & attitude indicator",value:"CHECKED",done:false},
-            {id:605,text:"Compass",value:"CHECKED",done:false},
-          ]
-        },
-        {
-          id: 16, name: "Engine Run-up", items: [
-            {id:701,text:"Parking brake",value:"SET",done:false},
-            {id:702,text:"Nose",value:"INTO THE WIND",done:false},
-            {id:703,text:"Area behind",value:"CLEAR",done:false},
-            {id:704,text:"Brakes",value:"HOLD",done:false},
-            {id:705,text:"Power lever",value:"IDLE",done:false},
-            {id:706,text:"FADEC test",value:"PERFORMED",done:false},
-            {id:707,text:"Engine instruments",value:"ALL GREEN",done:false},
-            {id:708,text:"Voltmeter",value:"GREEN",done:false},
-          ]
-        },
-        {
-          id: 17, name: "Before Takeoff", items: [
-            {id:801,text:"Engine run",value:"PERFORMED",done:false},
-            {id:802,text:"Canopy",value:"CLOSED & LOCKED",done:false},
-            {id:803,text:"Seat & seatbelts",value:"LOCKED & TIGHT",done:false},
-            {id:804,text:"Flight controls",value:"FREE & CORRECT",done:false},
-            {id:805,text:"Instruments",value:"CHECKED",done:false},
-            {id:806,text:"Autopilot",value:"OFF",done:false},
-            {id:807,text:"Electrical fuel pump",value:"ON",done:false},
-            {id:808,text:"Flaps",value:"CHECKED & SET FOR T/O",done:false},
-            {id:809,text:"Trim",value:"CHECKED & SET FOR T/O",done:false},
-            {id:810,text:"Departure briefing",value:"REVIEWED",done:false},
-          ]
-        },
-        {
-          id: 18, name: "Line-up", items: [
-            {id:901,text:"Parking brake",value:"OFF",done:false},
-            {id:902,text:"Approach area",value:"CLEAR",done:false},
-            {id:903,text:"Pitot heat",value:"AS REQUIRED",done:false},
-            {id:904,text:"Taxi light",value:"OFF",done:false},
-            {id:905,text:"Landing light",value:"ON",done:false},
-            {id:906,text:"Strobe lights",value:"ON",done:false},
-            {id:907,text:"Transponder",value:"ALT",done:false},
-            {id:908,text:"Elevation & QFU",value:"CHECKED",done:false},
-          ]
-        },
-        {
-          id: 19, name: "Take-off", items: [
-            {id:1001,text:"Engine parameters",value:"GREEN",done:false},
-            {id:1002,text:"Load (min 94% / 2240 RPM)",value:"CHECKED",done:false},
-            {id:1003,text:"Airspeed",value:"ALIVE",done:false},
-            {id:1004,text:"Vr rotation speed",value:"61 KTS",done:false},
-            {id:1005,text:"Vx best angle",value:"68 KTS",done:false},
-            {id:1006,text:"Vy best rate",value:"78 KTS",done:false},
-            {id:1007,text:"Vg best glide",value:"78 KTS",done:false},
-            {id:1008,text:"After T/O — Brakes",value:"APPLY",done:false},
-            {id:1009,text:"After T/O — Engine instruments",value:"GREEN",done:false},
-            {id:1010,text:"After T/O — Climb rate",value:"POSITIVE",done:false},
-            {id:1011,text:"After T/O — Flaps (<200 ft AGL clear of obstacles)",value:"UP",done:false},
-            {id:1012,text:"After T/O — Elec. fuel pump (>1000 ft AGL)",value:"OFF",done:false},
-            {id:1013,text:"After T/O — Landing light (>1000 ft AGL)",value:"OFF",done:false},
-          ]
-        },
-        {
-          id: 20, name: "Approach", items: [
-            {id:1101,text:"Altimeter",value:"SET",done:false},
-            {id:1102,text:"Flight instruments",value:"CHECKED & SET",done:false},
-            {id:1103,text:"Landing light",value:"ON",done:false},
-            {id:1104,text:"Electrical fuel pump",value:"ON",done:false},
-            {id:1105,text:"Approach briefing",value:"COMPLETED",done:false},
-          ]
-        },
-        {
-          id: 21, name: "Landing", items: [
-            {id:1201,text:"Approach",value:"CLEAR",done:false},
-            {id:1202,text:"Brakes",value:"CHECKED",done:false},
-            {id:1203,text:"Flaps",value:"SET",done:false},
-            {id:1204,text:"After landing — Flaps",value:"UP",done:false},
-            {id:1205,text:"After landing — Electrical fuel pump",value:"OFF",done:false},
-            {id:1206,text:"After landing — Landing light",value:"OFF",done:false},
-            {id:1207,text:"After landing — Pitot heat",value:"OFF",done:false},
-            {id:1208,text:"After landing — Transponder",value:"SBY",done:false},
-          ]
-        },
-        {
-          id: 22, name: "Shutdown", items: [
-            {id:1301,text:"Power lever (min 1 min)",value:"IDLE",done:false},
-            {id:1302,text:"Avionics master switch",value:"OFF",done:false},
-            {id:1303,text:"Flaps",value:"DOWN",done:false},
-            {id:1304,text:"Engine master",value:"OFF",done:false},
-            {id:1305,text:"Electrical switches",value:"ALL OFF",done:false},
-            {id:1306,text:"Battery switch",value:"OFF",done:false},
-            {id:1307,text:"Key",value:"REMOVED",done:false},
-            {id:1308,text:"Parking brake",value:"AS REQUIRED",done:false},
-          ]
-        },
-      ]
-    },
-    {
-      id: 2,
-      name: "OO-VPE · DR400-135 CDI",
-      checklists: [
-        {
-          id: 30, name: "Pre-flight Internal", items: [
-            {id:2101,text:"Engine master switch",value:"OFF",done:false},
-            {id:2102,text:"Avionics master switch",value:"OFF",done:false},
-            {id:2103,text:"Controls",value:"FREE",done:false},
-            {id:2104,text:"Battery switch",value:"ON",done:false},
-            {id:2105,text:"Flaps",value:"CHECKED",done:false},
-            {id:2106,text:"Trim",value:"CHECKED",done:false},
-            {id:2107,text:"Fuel quantity",value:"CHECKED",done:false},
-            {id:2108,text:"Coolant level light",value:"OFF",done:false},
-            {id:2109,text:"— Night flight: Strobe light",value:"CHECKED OPERATIONAL",done:false},
-            {id:2110,text:"— Night flight: Navigation lights",value:"CHECKED OPERATIONAL",done:false},
-            {id:2111,text:"— Night flight: Landing light",value:"CHECKED OPERATIONAL",done:false},
-            {id:2112,text:"— Night flight: Taxi light",value:"CHECKED OPERATIONAL",done:false},
-            {id:2113,text:"— Night flight: Interior lights",value:"CHECKED OPERATIONAL",done:false},
-            {id:2114,text:"— Night flight: Day/night switch",value:"CHECKED & SET",done:false},
-            {id:2115,text:"— Night flight: Emergency torchlight",value:"ON BOARD",done:false},
-            {id:2116,text:"Fuel (2 drains)",value:"DRAINED",done:false},
-            {id:2117,text:"Oil",value:"CHECKED",done:false},
-            {id:2118,text:"Battery switch",value:"OFF",done:false},
-            {id:2119,text:"Aircraft documents",value:"ON BOARD",done:false},
-            {id:2120,text:"Luggage",value:"PROPERLY STOWED",done:false},
-          ]
-        },
-        {
-          id: 31, name: "Pre-flight External", items: [
-            {id:2201,text:"Fuel filler cap",value:"IN PLACE & SECURED",done:false},
-            {id:2202,text:"Fuel tank vents",value:"FREE",done:false},
-            {id:2203,text:"LH static",value:"CLEAR",done:false},
-            {id:2204,text:"Main fuel tank",value:"DRAINED & CHECKED",done:false},
-            {id:2205,text:"Aux fuel tank drain (if app)",value:"DRAINED & CHECKED",done:false},
-            {id:2206,text:"Stabilator",value:"CHECKED",done:false},
-            {id:2207,text:"Rudder",value:"CHECKED",done:false},
-            {id:2208,text:"RH static",value:"CLEAR",done:false},
-            {id:2209,text:"RH flap & aileron",value:"CHECKED",done:false},
-            {id:2210,text:"RH navigation lights",value:"CHECKED",done:false},
-            {id:2211,text:"Stall warning",value:"CHECKED",done:false},
-            {id:2212,text:"RH landing gear",value:"CHECKED",done:false},
-            {id:2213,text:"Fuel filter",value:"DRAINED & CHECKED",done:false},
-            {id:2214,text:"Exhaust pipe",value:"RIGID",done:false},
-            {id:2215,text:"Engine cowl attachments",value:"CHECKED",done:false},
-            {id:2216,text:"Propeller",value:"CHECKED",done:false},
-            {id:2217,text:"Propeller hub",value:"NO PLAY",done:false},
-            {id:2218,text:"Spinner",value:"CHECKED",done:false},
-            {id:2219,text:"Air inlets",value:"CLEAR",done:false},
-            {id:2220,text:"Gear box oil level",value:"CHECKED",done:false},
-            {id:2221,text:"Nose gear",value:"CHECKED",done:false},
-            {id:2222,text:"Engine oil",value:"CHECKED",done:false},
-            {id:2223,text:"Canopy",value:"CLEAN",done:false},
-            {id:2224,text:"LH landing gear",value:"CHECKED",done:false},
-            {id:2225,text:"Pitot",value:"CLEAN",done:false},
-            {id:2226,text:"Lights",value:"CHECKED",done:false},
-            {id:2227,text:"LH nav lights",value:"CHECKED",done:false},
-            {id:2228,text:"LH flap & aileron",value:"CHECKED",done:false},
-          ]
-        },
-        {
-          id: 32, name: "Before Start", items: [
-            {id:2301,text:"Canopy",value:"CLOSED & LOCKED",done:false},
-            {id:2302,text:"Parking brake",value:"SET",done:false},
-            {id:2303,text:"Seats & seatbelts",value:"SET",done:false},
-            {id:2304,text:"Briefing",value:"COMPLETED",done:false},
-            {id:2305,text:"Flight controls",value:"FREE & CORRECT",done:false},
-            {id:2306,text:"Avionic master",value:"OFF",done:false},
-            {id:2307,text:"Battery master",value:"ON",done:false},
-            {id:2308,text:"CED auto-test",value:"MONITOR",done:false},
-            {id:2309,text:"Alternator",value:"ON",done:false},
-            {id:2310,text:"Annunciator panel",value:"CHECKED",done:false},
-            {id:2311,text:"ELT",value:"ARMED",done:false},
-            {id:2312,text:"Circuit breakers",value:"ALL IN",done:false},
-            {id:2313,text:"Cabin heat",value:"OFF",done:false},
-            {id:2314,text:"Fuel level & temp (min -30°C)",value:"CHECKED",done:false},
-            {id:2315,text:"Electrical switches",value:"OFF",done:false},
-            {id:2316,text:"Alternate air",value:"CHECKED & CLOSED",done:false},
-            {id:2317,text:"Fuel valve",value:"OPEN",done:false},
-          ]
-        },
-        {
-          id: 33, name: "Engine Start", items: [
-            {id:2401,text:"Brakes",value:"HOLD",done:false},
-            {id:2402,text:"Strobe light",value:"ON",done:false},
-            {id:2403,text:"Electrical fuel pump",value:"ON",done:false},
-            {id:2404,text:"Power lever",value:"IDLE",done:false},
-            {id:2405,text:"Key",value:"READY",done:false},
-            {id:2406,text:"Engine master",value:"ON",done:false},
-            {id:2407,text:"FADEC lights",value:"CHECK OFF",done:false},
-            {id:2408,text:"Glow light",value:"ON THEN OFF",done:false},
-            {id:2409,text:"Propeller area",value:"CLEAR",done:false},
-            {id:2410,text:"Starter",value:"ON",done:false},
-            {id:2411,text:"Oil pressure (min 1 bar / 3 sec)",value:"CHECKED",done:false},
-            {id:2412,text:"RPM",value:"±890",done:false},
-          ]
-        },
-        {
-          id: 34, name: "After Start", items: [
-            {id:2501,text:"Electrical fuel pump",value:"OFF",done:false},
-            {id:2502,text:"CED caution light",value:"ACKNOWLEDGE",done:false},
-            {id:2503,text:"Alternator light",value:"CHECKED OFF",done:false},
-            {id:2504,text:"FADEC backup battery test — Alternator switch",value:"OFF",done:false},
-            {id:2505,text:"FADEC backup battery test — Battery switch",value:"OFF >10 SEC",done:false},
-            {id:2506,text:"FADEC backup battery test — Engine",value:"NORMALLY",done:false},
-            {id:2507,text:"FADEC backup battery test — FADEC lights",value:"OFF",done:false},
-            {id:2508,text:"FADEC backup battery test — Battery switch",value:"ON",done:false},
-            {id:2509,text:"FADEC backup battery test — Alternator switch",value:"ON",done:false},
-            {id:2510,text:"Engine instruments",value:"CHECKED",done:false},
-            {id:2511,text:"Voltage",value:">14V",done:false},
-            {id:2512,text:"Avionics master",value:"ON",done:false},
-            {id:2513,text:"ATIS (if applicable)",value:"OBTAIN",done:false},
-            {id:2514,text:"Altimeter",value:"SET",done:false},
-            {id:2515,text:"Attitude indicator",value:"ALIGNED",done:false},
-            {id:2516,text:"Directional gyro",value:"ALIGNED",done:false},
-            {id:2517,text:"Radios and navaids",value:"SET",done:false},
-            {id:2518,text:"Engine warm up",value:"PERFORMED",done:false},
-          ]
-        },
-        {
-          id: 35, name: "Taxi", items: [
-            {id:2601,text:"Landing light",value:"IF APPLICABLE",done:false},
-            {id:2602,text:"Parking brake",value:"OFF",done:false},
-            {id:2603,text:"Brakes",value:"CHECKED",done:false},
-            {id:2604,text:"Direction & attitude indicator",value:"CHECKED",done:false},
-            {id:2605,text:"Compass",value:"CHECKED",done:false},
-          ]
-        },
-        {
-          id: 36, name: "Engine Run-up", items: [
-            {id:2701,text:"Parking brake",value:"SET",done:false},
-            {id:2702,text:"Nose",value:"INTO THE WIND",done:false},
-            {id:2703,text:"Area behind",value:"CLEAR",done:false},
-            {id:2704,text:"Brakes",value:"HOLD",done:false},
-            {id:2705,text:"Power lever",value:"IDLE",done:false},
-            {id:2706,text:"FADEC test",value:"PERFORMED",done:false},
-            {id:2707,text:"Engine instruments",value:"ALL GREEN",done:false},
-            {id:2708,text:"Voltmeter",value:"GREEN",done:false},
-          ]
-        },
-        {
-          id: 37, name: "Before Takeoff", items: [
-            {id:2801,text:"Engine run",value:"PERFORMED",done:false},
-            {id:2802,text:"Canopy",value:"CLOSED & LOCKED",done:false},
-            {id:2803,text:"Seat & seatbelts",value:"LOCKED & TIGHT",done:false},
-            {id:2804,text:"Flight controls",value:"FREE & CORRECT",done:false},
-            {id:2805,text:"Instruments",value:"CHECKED",done:false},
-            {id:2806,text:"Autopilot",value:"OFF",done:false},
-            {id:2807,text:"Electrical fuel pump",value:"ON",done:false},
-            {id:2808,text:"Flaps",value:"CHECKED & SET FOR T/O",done:false},
-            {id:2809,text:"Trim",value:"CHECKED & SET FOR T/O",done:false},
-            {id:2810,text:"Departure briefing",value:"REVIEWED",done:false},
-          ]
-        },
-        {
-          id: 38, name: "Line-up", items: [
-            {id:2901,text:"Parking brake",value:"OFF",done:false},
-            {id:2902,text:"Approach area",value:"CLEAR",done:false},
-            {id:2903,text:"Pitot heat",value:"AS REQUIRED",done:false},
-            {id:2904,text:"Landing light",value:"ON",done:false},
-            {id:2905,text:"Strobe lights",value:"ON",done:false},
-            {id:2906,text:"Transponder",value:"ALT",done:false},
-            {id:2907,text:"Elevation & QFU",value:"CHECKED",done:false},
-          ]
-        },
-        {
-          id: 39, name: "Take-off", items: [
-            {id:3001,text:"Engine parameters",value:"GREEN",done:false},
-            {id:3002,text:"Load (min 94% / 2240 RPM)",value:"CHECKED",done:false},
-            {id:3003,text:"Airspeed",value:"ALIVE",done:false},
-            {id:3004,text:"Vx best angle",value:"65 KTS",done:false},
-            {id:3005,text:"Vy best rate",value:"78 KTS",done:false},
-            {id:3006,text:"Vg best glide",value:"78 KTS",done:false},
-            {id:3007,text:"After T/O — Brakes",value:"APPLY",done:false},
-            {id:3008,text:"After T/O — Engine instruments",value:"GREEN",done:false},
-            {id:3009,text:"After T/O — Climb rate",value:"POSITIVE",done:false},
-            {id:3010,text:"After T/O — Flaps (<200 ft AGL clear of obstacles)",value:"UP",done:false},
-            {id:3011,text:"After T/O — Elec. fuel pump (>1000 ft AGL)",value:"OFF",done:false},
-            {id:3012,text:"After T/O — Landing light (>1000 ft AGL)",value:"OFF",done:false},
-          ]
-        },
-        {
-          id: 40, name: "Approach", items: [
-            {id:3101,text:"Altimeter",value:"SET",done:false},
-            {id:3102,text:"Directional gyro",value:"ALIGN",done:false},
-            {id:3103,text:"Landing light",value:"ON",done:false},
-            {id:3104,text:"Electrical fuel pump",value:"ON",done:false},
-            {id:3105,text:"Approach briefing",value:"COMPLETED",done:false},
-          ]
-        },
-        {
-          id: 41, name: "Landing", items: [
-            {id:3201,text:"Approach",value:"CLEAR",done:false},
-            {id:3202,text:"Brakes",value:"CHECKED",done:false},
-            {id:3203,text:"Flaps",value:"SET",done:false},
-            {id:3204,text:"After landing — Flaps",value:"UP",done:false},
-            {id:3205,text:"After landing — Electrical fuel pump",value:"OFF",done:false},
-            {id:3206,text:"After landing — Landing light",value:"OFF",done:false},
-            {id:3207,text:"After landing — Pitot heat",value:"OFF",done:false},
-            {id:3208,text:"After landing — Transponder",value:"SBY",done:false},
-          ]
-        },
-        {
-          id: 42, name: "Shutdown", items: [
-            {id:3301,text:"Power lever (min 1 min)",value:"IDLE",done:false},
-            {id:3302,text:"Avionics master switch",value:"OFF",done:false},
-            {id:3303,text:"Flaps",value:"DOWN",done:false},
-            {id:3304,text:"Engine master",value:"OFF",done:false},
-            {id:3305,text:"Electrical switches",value:"ALL OFF",done:false},
-            {id:3306,text:"Battery switch",value:"OFF",done:false},
-            {id:3307,text:"Key",value:"REMOVED",done:false},
-            {id:3308,text:"Parking brake",value:"AS REQUIRED",done:false},
-          ]
-        },
-      ]
-    }
-  ]
-};
-
-// ── State ──────────────────────────────────────────────
-let db = JSON.parse(localStorage.getItem('flightcheck-db') || 'null') || JSON.parse(JSON.stringify(SEED));
-let activePlaneId = db.planes[0]?.id || null;
-let activeChecklistId = db.planes[0]?.checklists[0]?.id || null;
+// â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+let db = null;
+let activePlaneId = null;
+let activeChecklistId = null;
 let notesDB = JSON.parse(localStorage.getItem('flightcheck-notes-db') || 'null') || { nextId: 2, notes: [{ id: 1, name: 'Note 1' }], activeNoteId: 1 };
 
 function save() { localStorage.setItem('flightcheck-db', JSON.stringify(db)); }
@@ -690,7 +248,7 @@ function saveNoteCanvas(id, url) { localStorage.setItem('flightcheck-note-' + id
 function getNoteCanvas(id) { return localStorage.getItem('flightcheck-note-' + id); }
 function notesUid() { return notesDB.nextId++; }
 
-// ── Render sidebar ─────────────────────────────────────
+// â”€â”€ Render sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderSidebar() {
   const el = document.getElementById('plane-list');
   el.innerHTML = '';
@@ -707,7 +265,7 @@ function renderSidebar() {
         <div class="plane-icon"><i class="ti ti-plane"></i></div>
         <div class="plane-info">
           <div class="plane-name">${plane.name}</div>
-          <div class="plane-meta">${plane.checklists.length} lists · ${done}/${total}</div>
+          <div class="plane-meta">${plane.checklists.length} lists Â· ${done}/${total}</div>
         </div>
         <button class="plane-del" data-del="${plane.id}"><i class="ti ti-trash"></i></button>
       </div>`;
@@ -715,7 +273,7 @@ function renderSidebar() {
   });
 }
 
-// ── Render main ────────────────────────────────────────
+// â”€â”€ Render main â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderMain() {
   const plane = getPlane(activePlaneId);
   const titleEl = document.getElementById('main-title');
@@ -726,14 +284,14 @@ function renderMain() {
 
   if (!plane) {
     titleEl.textContent = 'Select an aircraft';
-    subEl.textContent = '← Choose or add an aircraft';
+    subEl.textContent = 'â† Choose or add an aircraft';
     tabsEl.innerHTML = ''; actionsEl.innerHTML = '';
     contentEl.innerHTML = '<div class="empty-state"><i class="ti ti-plane-tilt"></i><h3>No aircraft selected</h3><p>Select an aircraft from the sidebar.</p></div>';
     return;
   }
 
   titleEl.textContent = plane.name;
-  subEl.textContent = `${plane.checklists.length} checklists · Always refer to POH`;
+  subEl.textContent = `${plane.checklists.length} checklists Â· Always refer to POH`;
 
   actionsEl.innerHTML = `<button class="pill-btn danger" id="reset-btn"><i class="ti ti-refresh"></i> Reset all</button>`;
   document.getElementById('reset-btn').addEventListener('click', () => {
@@ -789,7 +347,7 @@ function renderMain() {
         <button class="cl-checkbox" data-check="${item.id}" aria-label="Toggle"><i class="ti ti-check"></i></button>
         <div class="cl-item-body">
           <div class="cl-item-text">${item.text}</div>
-          ${item.value?`<div class="cl-item-value">→ ${item.value}</div>`:''}
+          ${item.value?`<div class="cl-item-value">â†’ ${item.value}</div>`:''}
           <div class="cl-item-edit" id="edit-${item.id}">
             <input class="edit-text-input" type="text" value="${item.text}" placeholder="Step text" />
             <div class="cl-item-edit-row">
@@ -811,7 +369,7 @@ function renderMain() {
   }
 
   html += `<div class="add-item-row">
-    <input type="text" id="new-item-text" placeholder="New item…" />
+    <input type="text" id="new-item-text" placeholder="New itemâ€¦" />
     <input type="text" id="new-item-value" class="val-in" placeholder="Expected value" />
     <button class="add-item-btn" id="add-item-btn"><i class="ti ti-plus"></i> Add</button>
   </div>`;
@@ -821,7 +379,7 @@ function renderMain() {
   document.getElementById('new-item-text').addEventListener('keydown', e => { if(e.key==='Enter') addItem(); });
 }
 
-// ── Actions ────────────────────────────────────────────
+// â”€â”€ Actions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function addPlane(name) {
   if (!name.trim()) return;
   const plane = { id: uid(), name: name.trim(), checklists: [] };
@@ -873,7 +431,7 @@ function deleteItem(itemId) {
   save(); renderSidebar(); renderMain();
 }
 
-// ── Modal ──────────────────────────────────────────────
+// â”€â”€ Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let _modalCb = null;
 function openModal(title, cb, defaultVal) {
   _modalCb = cb || null;
@@ -893,7 +451,7 @@ document.getElementById('modal-cancel').addEventListener('click', closeModal);
 document.getElementById('modal').addEventListener('click', e => { if(e.target===document.getElementById('modal')) closeModal(); });
 document.getElementById('modal-input').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('modal-confirm').click(); });
 
-// ── Event delegation ───────────────────────────────────
+// â”€â”€ Event delegation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 document.getElementById('plane-list').addEventListener('click', e => {
   const del = e.target.closest('[data-del]');
   if (del) { e.stopPropagation(); deletePlane(+del.dataset.del); return; }
@@ -984,14 +542,14 @@ document.getElementById('new-plane-input').addEventListener('keydown', e => {
   if (e.key==='Enter') document.getElementById('add-plane-btn').click();
 });
 
-// ── Toast ──────────────────────────────────────────────
+// â”€â”€ Toast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ── Export ─────────────────────────────────────────────
+// â”€â”€ Export â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 document.getElementById('export-btn').addEventListener('click', () => {
   const json = JSON.stringify(db, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
@@ -1001,10 +559,10 @@ document.getElementById('export-btn').addEventListener('click', () => {
   a.download = 'flightcheck-backup-' + new Date().toISOString().slice(0,10) + '.json';
   a.click();
   URL.revokeObjectURL(url);
-  showToast('Backup exported ✓');
+  showToast('Backup exported âœ“');
 });
 
-// ── Import ─────────────────────────────────────────────
+// â”€â”€ Import â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 document.getElementById('import-btn').addEventListener('click', () => {
   document.getElementById('import-file').click();
 });
@@ -1021,16 +579,16 @@ document.getElementById('import-file').addEventListener('change', e => {
       activePlaneId = db.planes[0]?.id || null;
       activeChecklistId = db.planes[0]?.checklists[0]?.id || null;
       save(); renderSidebar(); renderMain();
-      showToast('Backup imported ✓');
+      showToast('Backup imported âœ“');
     } catch {
-      showToast('Invalid backup file ✗');
+      showToast('Invalid backup file âœ—');
     }
   };
   reader.readAsText(file);
   e.target.value = '';
 });
 
-// ── Notes ──────────────────────────────────────────────
+// â”€â”€ Notes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let drawColor = '#e8e6df', drawSize = 4, drawTool = 'pen';
 
 function renderNotes() {
@@ -1210,7 +768,7 @@ document.getElementById('notes-tab').addEventListener('click', () => {
   renderNotes();
 });
 
-// ── Theme ──────────────────────────────────────────────
+// â”€â”€ Theme â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function applyTheme(light) {
   document.body.classList.toggle('light', light);
   document.getElementById('theme-icon').className = light ? 'ti ti-moon' : 'ti ti-sun';
@@ -1222,9 +780,18 @@ document.getElementById('theme-btn').addEventListener('click', () => {
   applyTheme(isLight);
 });
 
-// ── Init ───────────────────────────────────────────────
-renderSidebar();
-renderMain();
+// â”€â”€ Init â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+(async () => {
+  db = JSON.parse(localStorage.getItem('flightcheck-db') || 'null');
+  if (!db) {
+    const seed = await fetch('seed.json').then(r => r.json());
+    db = JSON.parse(JSON.stringify(seed));
+  }
+  activePlaneId = db.planes[0]?.id || null;
+  activeChecklistId = db.planes[0]?.checklists[0]?.id || null;
+  renderSidebar();
+  renderMain();
+})();
 </script>
 </body>
 </html>
