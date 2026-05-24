@@ -347,7 +347,7 @@ function renderMain() {
         <button class="cl-checkbox" data-check="${item.id}" aria-label="Toggle"><i class="ti ti-check"></i></button>
         <div class="cl-item-body">
           <div class="cl-item-text">${item.text}</div>
-          ${item.value?`<div class="cl-item-value">â†’ ${item.value}</div>`:''}
+          ${item.value?`<div class="cl-item-value">→ ${item.value}</div>`:’’}
           <div class="cl-item-edit" id="edit-${item.id}">
             <input class="edit-text-input" type="text" value="${item.text}" placeholder="Step text" />
             <div class="cl-item-edit-row">
