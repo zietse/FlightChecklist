@@ -13,7 +13,11 @@ html,body { height:100%; background:var(--bg); color:var(--text); font-family:va
 .layout { display:flex; height:100vh; height:100dvh; overflow:hidden; }
 
 /* Sidebar */
-.sidebar { width:270px; min-width:270px; background:var(--bg2); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
+.sidebar { width:270px; min-width:270px; background:var(--bg2); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; transition:width 0.25s ease, min-width 0.25s ease; }
+.layout.sidebar-hidden .sidebar { width:0; min-width:0; border-right:none; }
+.sidebar-toggle-btn { width:34px; height:34px; border:none; background:transparent; color:var(--text-muted); cursor:pointer; border-radius:var(--r); display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; transition:color 0.15s; margin-left:4px; }
+.sidebar-toggle-btn:hover { color:var(--amber); }
+.layout.sidebar-hidden .sidebar-toggle-btn { color:var(--amber); }
 .sidebar-header { padding:20px 18px 16px; border-bottom:1px solid var(--border); }
 .app-title { font-family:var(--mono); font-size:17px; color:var(--amber); letter-spacing:2px; text-transform:uppercase; display:flex; align-items:center; gap:8px; }
 .app-title .bi { font-size:20px; }

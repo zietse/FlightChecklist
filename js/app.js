@@ -211,6 +211,15 @@ document.getElementById('import-file').addEventListener('change', e => {
   e.target.value = '';
 });
 
+// ── Sidebar toggle ─────────────────────────────────────
+if (localStorage.getItem('flightcheck-sidebar-hidden') === '1') {
+  document.querySelector('.layout').classList.add('sidebar-hidden');
+}
+document.getElementById('sidebar-toggle').addEventListener('click', () => {
+  const hidden = document.querySelector('.layout').classList.toggle('sidebar-hidden');
+  localStorage.setItem('flightcheck-sidebar-hidden', hidden ? '1' : '0');
+});
+
 // ── Theme ──────────────────────────────────────────────
 function applyTheme(light) {
   document.body.classList.toggle('light', light);
