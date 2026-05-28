@@ -83,7 +83,7 @@ function _voiceRender() {
     const valEl = document.getElementById('voice-item-value');
     if (item.value) { valEl.textContent = '→ ' + item.value; valEl.style.display = 'block'; }
     else { valEl.style.display = 'none'; }
-    _voiceSpeak(item.value ? item.text + '... ' + item.value : item.text);
+    _voiceSpeak(item.text);
   }
 }
 
