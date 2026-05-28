@@ -76,6 +76,7 @@ function _voiceRender() {
   document.getElementById('voice-skip-btn').disabled = complete;
   _voiceUpdateTTSBtn();
 
+  const hintEl = document.getElementById('voice-hint');
   if (!complete) {
     const item = cl.items[_voiceIdx];
     document.getElementById('voice-item-num').textContent = 'Item ' + (_voiceIdx + 1) + ' of ' + total;
@@ -83,7 +84,11 @@ function _voiceRender() {
     const valEl = document.getElementById('voice-item-value');
     if (item.value) { valEl.textContent = '→ ' + item.value; valEl.style.display = 'block'; }
     else { valEl.style.display = 'none'; }
+    const cmd = item.value ? item.value.toUpperCase().replace(/&/g, 'AND') : 'CHECKED';
+    if (hintEl) hintEl.innerHTML = `Say <strong style="color:var(--amber);">${cmd}</strong> &nbsp;·&nbsp; <strong style="color:var(--amber);">SKIP</strong> &nbsp;·&nbsp; <strong style="color:var(--amber);">BACK</strong> &nbsp;·&nbsp; <strong style="color:var(--amber);">COMPLETE</strong>`;
     _voiceSpeak(item.text);
+  } else {
+    if (hintEl) hintEl.innerHTML = '';
   }
 }
 
@@ -172,17 +177,22 @@ function _voiceStartRec() {
       );
       document.getElementById('voice-transcript').textContent = '"' + alts[0] + '"';
 
-      const words = alts.join(' ').split(/[\s,.!?]+/);
+      const combined = alts.join(' ');
+      const words = combined.split(/[\s,.!?]+/);
+      const currentItem = _voiceCL()?.items[_voiceIdx];
+      const expectedValue = currentItem?.value?.toLowerCase().trim().replace(/&/g, 'and');
+
       if (words.some(w => w === 'complete')) {
         _voiceComplete();
-      } else if (words.some(w => w === 'checked')) {
+      } else if (expectedValue ? combined.includes(expectedValue) : words.some(w => w === 'checked')) {
         _voiceCheck();
       } else if (words.some(w => w === 'back')) {
         _voiceBack();
       } else if (words.some(w => w === 'skip' || w === 'next')) {
         _voiceSkip();
       } else {
-        statusEl.textContent = 'Say CHECKED · SKIP · BACK · COMPLETE';
+        const cmd = expectedValue ? expectedValue.toUpperCase() : 'CHECKED';
+        statusEl.textContent = `Say ${cmd} · SKIP · BACK`;
         setTimeout(() => { if (_voiceActive) statusEl.textContent = 'Listening…'; }, 2000);
       }
     };
