@@ -174,3 +174,20 @@ body.light {
 }
 #draw-canvas { background:transparent; }
 
+/* Voice mode */
+#voice-overlay { position:fixed; inset:0; z-index:500; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px 24px; gap:22px; }
+.voice-item-card { background:var(--bg2); border:1px solid var(--border-amb); border-radius:14px; padding:36px 48px; text-align:center; width:100%; max-width:520px; display:flex; flex-direction:column; align-items:center; transition:border-color 0.5s ease, background 0.5s ease; }
+.voice-item-text { font-family:var(--mono); font-size:22px; color:var(--text); letter-spacing:1px; line-height:1.5; }
+.voice-item-value { font-size:16px; color:var(--amber); margin-top:10px; font-family:var(--mono); }
+.voice-complete-card { background:var(--green-dim); border:1px solid var(--green); border-radius:14px; padding:36px 48px; text-align:center; width:100%; max-width:520px; display:flex; flex-direction:column; align-items:center; }
+.voice-mic { width:12px; height:12px; border-radius:50%; background:var(--green); flex-shrink:0; }
+.voice-mic.listening { animation:voice-pulse 1.4s ease-in-out infinite; }
+@keyframes voice-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.35;transform:scale(0.7)} }
+.voice-btn { height:46px; padding:0 22px; border-radius:99px; border:1px solid var(--border); background:transparent; color:var(--text-muted); font-family:var(--sans); font-size:14px; cursor:pointer; display:flex; align-items:center; gap:7px; transition:all 0.15s; white-space:nowrap; }
+.voice-btn:hover:not(:disabled) { border-color:var(--amber-dim); color:var(--amber); }
+.voice-btn:disabled { opacity:0.28; cursor:not-allowed; }
+.voice-btn-check { border-color:var(--green); color:var(--green); background:var(--green-dim); }
+.voice-btn-check:hover:not(:disabled) { opacity:0.85; border-color:var(--green); color:var(--green); }
+.voice-exit-btn { height:34px; padding:0 16px; border-radius:99px; border:1px solid var(--red); background:transparent; color:var(--red); font-family:var(--mono); font-size:11px; letter-spacing:0.5px; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.15s; }
+.voice-exit-btn:hover { background:var(--red-dim); }
+

@@ -131,9 +131,44 @@
   </div>
 </div>
 
+<div id="voice-overlay" style="display:none;">
+  <div style="display:flex;align-items:center;gap:14px;font-family:var(--mono);">
+    <span id="voice-cl-name" style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-faint);"></span>
+    <span id="voice-progress" style="font-size:12px;color:var(--amber);font-weight:700;"></span>
+  </div>
+  <div class="voice-item-card" id="voice-item-card">
+    <div id="voice-item-num" style="font-size:11px;font-family:var(--mono);color:var(--text-faint);letter-spacing:1px;margin-bottom:14px;text-transform:uppercase;"></div>
+    <div class="voice-item-text" id="voice-item-text"></div>
+    <div class="voice-item-value" id="voice-item-value" style="display:none;"></div>
+  </div>
+  <div class="voice-complete-card" id="voice-complete-card" style="display:none;">
+    <i class="bi bi-check-circle" style="font-size:44px;color:var(--green);display:block;margin-bottom:12px;"></i>
+    <div style="font-family:var(--mono);font-size:16px;color:var(--green);letter-spacing:2px;">CHECKLIST COMPLETE</div>
+    <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">All items verified. Safe flying!</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="voice-mic" id="voice-mic"></div>
+    <span id="voice-status-text" style="font-family:var(--mono);font-size:12px;color:var(--text-muted);letter-spacing:1px;"></span>
+  </div>
+  <div id="voice-transcript" style="font-family:var(--mono);font-size:12px;color:var(--text-faint);min-height:16px;font-style:italic;"></div>
+  <div style="font-size:12px;color:var(--text-faint);font-family:var(--mono);letter-spacing:0.5px;">
+    Say <strong style="color:var(--amber);">CHECKED</strong> &nbsp;·&nbsp; <strong style="color:var(--amber);">SKIP</strong> &nbsp;·&nbsp; <strong style="color:var(--amber);">BACK</strong> &nbsp;·&nbsp; <strong style="color:var(--amber);">COMPLETE</strong>
+  </div>
+  <div style="display:flex;gap:10px;">
+    <button class="voice-btn" id="voice-back-btn"><i class="bi bi-arrow-left"></i> Back</button>
+    <button class="voice-btn" id="voice-skip-btn">Skip <i class="bi bi-arrow-right"></i></button>
+    <button class="voice-btn voice-btn-check" id="voice-check-btn"><i class="bi bi-check-lg"></i> Check</button>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center;">
+    <button class="voice-exit-btn" id="voice-tts-btn" title="Toggle read-aloud" style="border-color:var(--amber);color:var(--amber);"><i class="bi bi-volume-up" id="voice-tts-icon"></i> Read aloud</button>
+    <button class="voice-exit-btn" id="voice-exit-btn"><i class="bi bi-x-lg"></i> Exit</button>
+  </div>
+</div>
+
 <script src="js/state.js"></script>
 <script src="js/checklist.js"></script>
 <script src="js/notes.js"></script>
+<script src="js/voice.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 
-const CACHE = 'checklist-v19';
+const CACHE = 'checklist-v22';
 
 const ASSETS = [
   '/',
@@ -11,6 +11,7 @@ const ASSETS = [
   '/js/state.js',
   '/js/checklist.js',
   '/js/notes.js',
+  '/js/voice.js',
   '/js/app.js'
 ];
 

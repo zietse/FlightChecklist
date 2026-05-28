@@ -64,6 +64,7 @@ function renderMain() {
   actionsEl.insertAdjacentHTML('beforeend', `
     <button class="pill-btn" id="check-all-btn"><i class="bi bi-check2-all"></i> Complete</button>
     <button class="pill-btn" id="uncheck-all-btn"><i class="bi bi-square"></i> Uncheck</button>
+    <button class="pill-btn" id="voice-btn"><i class="bi bi-mic"></i> Voice</button>
     <button class="pill-btn${editMode ? ' pill-active' : ''}" id="edit-section-btn"><i class="bi bi-${editMode ? 'check-lg' : 'pencil'}"></i> ${editMode ? 'Done' : 'Edit'}</button>`);
   document.getElementById('check-all-btn').addEventListener('click', () => {
     cl.items.forEach(i => i.done = true);
@@ -73,6 +74,7 @@ function renderMain() {
     cl.items.forEach(i => i.done = false);
     save(); renderSidebar(); renderMain();
   });
+  document.getElementById('voice-btn').addEventListener('click', startVoiceMode);
   document.getElementById('edit-section-btn').addEventListener('click', () => {
     editMode = !editMode; renderMain();
   });
