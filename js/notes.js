@@ -89,13 +89,12 @@ function renderNotes() {
 
   const canvas = document.getElementById('draw-canvas');
   const dpr = window.devicePixelRatio || 1;
-  const cssW = contentEl.clientWidth;
   const cssH = Math.max(contentEl.clientHeight - 60, 500);
-  canvas.width = cssW * dpr;
-  canvas.height = cssH * dpr;
-  canvas.style.width = cssW + 'px';
   canvas.style.height = cssH + 'px';
   document.getElementById('canvas-wrap').style.height = cssH + 'px';
+  const cssW = canvas.offsetWidth; // actual rendered width after CSS layout
+  canvas.width = cssW * dpr;
+  canvas.height = cssH * dpr;
 
   const ctx = canvas.getContext('2d');
   const saved = getNoteCanvas(noteId);

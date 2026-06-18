@@ -90,11 +90,10 @@ function renderMain() {
     <span class="prog-pct ${complete?'complete':''}">${pct}%</span>
   </div>`;
 
-  if (complete) html += `<div class="complete-banner"><i class="bi bi-check-circle"></i><div><h4>Checklist complete</h4><p>All items verified. Safe flying!</p></div></div>`;
-
   if (!cl.items.length) {
     html += '<div class="empty-state" style="padding:2rem"><i class="bi bi-card-list"></i><h3>No items yet</h3><p>Add items below.</p></div>';
   } else {
+    if (complete) html += `<div class="items-overlay-wrap"><div class="section-done"><i class="bi bi-check-circle-fill"></i><div class="section-done-label">Done</div></div>`;
     cl.items.forEach((item, idx) => {
       html += `<div class="cl-item ${item.done?'checked':''} ${item.important?'important':''}" data-item="${item.id}">
         <button class="cl-checkbox" data-check="${item.id}" aria-label="Toggle"><i class="bi bi-check"></i></button>
@@ -118,6 +117,7 @@ function renderMain() {
         </div>
       </div>`;
     });
+    if (complete) html += `</div>`;
   }
 
   html += `<div class="add-item-row">
@@ -130,6 +130,9 @@ function renderMain() {
   contentEl.classList.toggle('edit-mode', editMode);
   document.getElementById('add-item-btn').addEventListener('click', addItem);
   document.getElementById('new-item-text').addEventListener('keydown', e => { if(e.key==='Enter') addItem(); });
+  const firstUnchecked = contentEl.querySelector('.cl-item:not(.checked)');
+  if (firstUnchecked) firstUnchecked.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  else contentEl.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function addCL(name) {
